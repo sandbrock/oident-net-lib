@@ -1,12 +1,24 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace AngrySS.OAuthSrv.Infra.Database.Entities;
+namespace OIdentNetLib.Infrastructure.EntityFramework.Entities;
 
 public class Tenant : BaseEntity
 {
     public Guid TenantId { get; set; }
     
     public string? Name { get; set; }
+    
+    public string? IconUrl { get; set; }
+    
+    public Database.Tenant ToInfrastructureEntity()
+    {
+        return new Database.Tenant
+        {
+            TenantId = TenantId,
+            Name = Name,
+            IconUrl = IconUrl
+        };
+    }
     
     public static void InitializeModelSchema(ModelBuilder modelBuilder)
     {
@@ -22,6 +34,9 @@ public class Tenant : BaseEntity
             entity.Property(e => e.Name)
                 .HasColumnName("name")
                 .HasMaxLength(50);
+            entity.Property(e => e.IconUrl)
+                .HasColumnName("icon_url")
+                .HasMaxLength(200);
 
             entity.HasIndex(e => e.Name).IsUnique();
         });

@@ -1,16 +1,34 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace AngrySS.OAuthSrv.Infra.Database.Entities;
+namespace OIdentNetLib.Infrastructure.EntityFramework.Entities;
 
 public class Audience : BaseEntity
 {
     public Guid? AudienceId { get; set; }
+    public string? Name { get; set; }
+    public string? Description { get; set; }
+    public string? LogoUrl { get; set; }
+    public string? WebsiteUrl { get; set; }
+    public string? PrivacyPolicyUrl { get; set; }
+    public string? TermsOfServiceUrl { get; set; }
     
     public Guid? TenantId { get; set; }
-
     public Tenant? Tenant { get; set; }
-
-    public string? Name { get; set; }
+    
+    public Database.Audience ToInfrastructureEntity()
+    {
+        return new Database.Audience()
+        {
+            AudienceId = AudienceId,
+            Name = Name,
+            Description = Description,
+            LogoUrl = LogoUrl,
+            WebsiteUrl = WebsiteUrl,
+            PrivacyPolicyUrl = PrivacyPolicyUrl,
+            TermsOfServiceUrl = TermsOfServiceUrl,
+            TenantId = TenantId,
+        };
+    }
 
     public static void InitializeModelSchema(ModelBuilder modelBuilder)
     {

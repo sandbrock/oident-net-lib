@@ -1,7 +1,7 @@
 using System.Net;
 using Microsoft.AspNetCore.Http;
 
-namespace AngrySS.OAuthSrv.App.Responses;
+namespace OIdentNetLib.Application.Responses;
 
 public class GenericHttpResponse<T>
 {

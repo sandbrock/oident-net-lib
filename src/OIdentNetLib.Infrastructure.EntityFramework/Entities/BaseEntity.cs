@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace AngrySS.OAuthSrv.Infra.Database.Entities;
+namespace OIdentNetLib.Infrastructure.EntityFramework.Entities;
 
 public class BaseEntity
 {

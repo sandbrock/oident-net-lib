@@ -1,7 +1,7 @@
-using AngrySS.OAuthSrv.Infra.Database.Entities;
 using Microsoft.EntityFrameworkCore;
+using OIdentNetLib.Infrastructure.EntityFramework.Entities;
 
-namespace AngrySS.OAuthSrv.Infra.Database;
+namespace OIdentNetLib.Infrastructure.EntityFramework;
 
 public class OAuthSrvDbContext : DbContext
 {
@@ -16,6 +16,11 @@ public class OAuthSrvDbContext : DbContext
     public DbSet<ClientAudienceScope> ClientAudienceScopes { get; set; }
     public DbSet<ClientRedirectUri> ClientRedirectUris { get; set; }
     public DbSet<Tenant> Tenants { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        base.OnConfiguring(optionsBuilder);
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

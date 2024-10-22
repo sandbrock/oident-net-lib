@@ -2,11 +2,13 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A97BF979-71DE-49A7-9FD0-4E3D81225A8A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AngrySS.OAuthSrv", "src\AngrySS.OAuthSrv\AngrySS.OAuthSrv.csproj", "{7302884B-2195-44AC-AD01-224D67382011}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OIdentNetLib", "src\OIdentNetLib\OIdentNetLib.csproj", "{7302884B-2195-44AC-AD01-224D67382011}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AngrySS.OAuthSrv.App", "src\AngrySS.OAuthSrv.App\AngrySS.OAuthSrv.App.csproj", "{8E15BCE6-12A1-4D20-B2D2-7CEED1CF0CD4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OIdentNetLib.Application", "src\OIdentNetLib.Application\OIdentNetLib.Application.csproj", "{8E15BCE6-12A1-4D20-B2D2-7CEED1CF0CD4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AngrySS.OAuthSrv.Infra", "src\AngrySS.OAuthSrv.Infra\AngrySS.OAuthSrv.Infra.csproj", "{C567B08A-05F4-4FE4-A0F1-BCA26D3780CC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OIdentNetLib.Infrastructure", "src\OIdentNetLib.Infrastructure\OIdentNetLib.Infrastructure.csproj", "{C567B08A-05F4-4FE4-A0F1-BCA26D3780CC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OIdentNetLib.Infrastructure.EntityFramework", "src\OIdentNetLib.Infrastructure.EntityFramework\OIdentNetLib.Infrastructure.EntityFramework.csproj", "{0AC7B107-81A5-467B-96D0-A2CBE3A300B1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,10 +28,15 @@ Global
 		{C567B08A-05F4-4FE4-A0F1-BCA26D3780CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C567B08A-05F4-4FE4-A0F1-BCA26D3780CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C567B08A-05F4-4FE4-A0F1-BCA26D3780CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0AC7B107-81A5-467B-96D0-A2CBE3A300B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0AC7B107-81A5-467B-96D0-A2CBE3A300B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0AC7B107-81A5-467B-96D0-A2CBE3A300B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0AC7B107-81A5-467B-96D0-A2CBE3A300B1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{7302884B-2195-44AC-AD01-224D67382011} = {A97BF979-71DE-49A7-9FD0-4E3D81225A8A}
 		{8E15BCE6-12A1-4D20-B2D2-7CEED1CF0CD4} = {A97BF979-71DE-49A7-9FD0-4E3D81225A8A}
 		{C567B08A-05F4-4FE4-A0F1-BCA26D3780CC} = {A97BF979-71DE-49A7-9FD0-4E3D81225A8A}
+		{0AC7B107-81A5-467B-96D0-A2CBE3A300B1} = {A97BF979-71DE-49A7-9FD0-4E3D81225A8A}
 	EndGlobalSection
 EndGlobal
