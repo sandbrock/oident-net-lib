@@ -1,4 +1,3 @@
-using System.Collections.ObjectModel;
 using Microsoft.EntityFrameworkCore;
 using OIdentNetLib.Infrastructure.Database;
 using OIdentNetLib.Infrastructure.Database.Contracts;
@@ -17,19 +16,14 @@ public class TenantReader(OAuthSrvDbContext context) : ITenantReader
             .Skip((pagedRequest.PageNumber - 1) * pagedRequest.PageSize)
             .Take(pagedRequest.PageSize);
         
-        var tenants = await pagedQuery.ToListAsync();
+        var entities = await pagedQuery.ToListAsync();
 
         var result = new PagedResponse<Tenant>()
         {
-            Data = new Collection<Tenant>(),
+            Data = entities,
             PageNumber = pagedRequest.PageNumber,
             TotalRowCount = await totalQuery.CountAsync()
         };
-        
-        foreach (var tenant in tenants)
-        {
-            result.Data.Add(tenant.ToInfrastructureEntity());
-        }
         
         return result;
     }

@@ -12,13 +12,7 @@ public class AudienceReader(OAuthSrvDbContext context) : IAudienceReader
         var query = context.Audiences
             .Where(a => a.AudienceId == audienceId);
         var queryResult = await query.FirstOrDefaultAsync();
-        
-        if (queryResult == null)
-        {
-            return null;
-        }
-        
-        return queryResult.ToInfrastructureEntity();
+        return queryResult;
     }
 
     public async Task<PagedResponse<Audience>> GetByTenantAsync(Guid tenantId, PagedRequest pagedRequest)
@@ -35,15 +29,10 @@ public class AudienceReader(OAuthSrvDbContext context) : IAudienceReader
 
         var result = new PagedResponse<Audience>()
         {
-            Data = new List<Audience>(),
+            Data = entities,
             PageNumber = pagedRequest.PageNumber,
             TotalRowCount = await totalQuery.CountAsync()
         };
-        
-        foreach (var entity in entities)
-        {
-            result.Data.Add(entity.ToInfrastructureEntity());
-        }
         
         return result;
     }

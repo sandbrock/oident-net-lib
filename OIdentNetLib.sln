@@ -10,6 +10,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OIdentNetLib.Infrastructure
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OIdentNetLib.Infrastructure.EntityFramework", "src\OIdentNetLib.Infrastructure.EntityFramework\OIdentNetLib.Infrastructure.EntityFramework.csproj", "{0AC7B107-81A5-467B-96D0-A2CBE3A300B1}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{B8F993F2-ECE2-4A62-997D-DB8813CC7E0A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OIdentNetLib.Infrastructure.Tests", "OIdentNetLib.Infrastructure.Tests\OIdentNetLib.Infrastructure.Tests.csproj", "{C472288B-D0F7-41F2-961E-9DA6AE08C764}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,11 +36,16 @@ Global
 		{0AC7B107-81A5-467B-96D0-A2CBE3A300B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0AC7B107-81A5-467B-96D0-A2CBE3A300B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0AC7B107-81A5-467B-96D0-A2CBE3A300B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C472288B-D0F7-41F2-961E-9DA6AE08C764}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C472288B-D0F7-41F2-961E-9DA6AE08C764}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C472288B-D0F7-41F2-961E-9DA6AE08C764}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C472288B-D0F7-41F2-961E-9DA6AE08C764}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{7302884B-2195-44AC-AD01-224D67382011} = {A97BF979-71DE-49A7-9FD0-4E3D81225A8A}
 		{8E15BCE6-12A1-4D20-B2D2-7CEED1CF0CD4} = {A97BF979-71DE-49A7-9FD0-4E3D81225A8A}
 		{C567B08A-05F4-4FE4-A0F1-BCA26D3780CC} = {A97BF979-71DE-49A7-9FD0-4E3D81225A8A}
 		{0AC7B107-81A5-467B-96D0-A2CBE3A300B1} = {A97BF979-71DE-49A7-9FD0-4E3D81225A8A}
+		{C472288B-D0F7-41F2-961E-9DA6AE08C764} = {B8F993F2-ECE2-4A62-997D-DB8813CC7E0A}
 	EndGlobalSection
 EndGlobal

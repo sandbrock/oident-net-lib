@@ -1,30 +1,23 @@
 using Microsoft.EntityFrameworkCore;
+using OIdentNetLib.Infrastructure.Database;
 
-namespace OIdentNetLib.Infrastructure.EntityFramework.Entities;
+namespace OIdentNetLib.Infrastructure.EntityFramework.SchemaMapping;
 
-public class ClientRedirectUri : BaseEntity
+public static class ClientRedirectUriMapping
 {
-    public Guid? ClientRedirectUriId { get; set; }
-    
-    public Guid? ClientId { get; set; }
-    
-    public Client? Client { get; set; }
-    
-    public Uri? Uri { get; set; }
-
     public static void InitializeModelSchema(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<ClientRedirectUri>(entity =>
         {
-            InitializeBaseEntity(entity);
-
             entity.ToTable("client");
 
             entity.HasKey(e => e.ClientRedirectUriId);
             
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
             entity.Property(e => e.ClientRedirectUriId).HasColumnName("client_redirect_uri_id");
             entity.Property(e => e.ClientId).HasColumnName("client_id");
-            entity.Property(e => e.Uri).HasColumnName("uri");
+            entity.Property(e => e.Uri).HasColumnName("uri").HasMaxLength(2048);
 
             entity.HasIndex(e => e.ClientId);
 

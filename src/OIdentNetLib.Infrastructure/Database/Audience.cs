@@ -1,6 +1,6 @@
 namespace OIdentNetLib.Infrastructure.Database;
 
-public class Audience
+public class Audience : BaseModel
 {
     public Guid? AudienceId { get; set; }
     public string? Name { get; set; }

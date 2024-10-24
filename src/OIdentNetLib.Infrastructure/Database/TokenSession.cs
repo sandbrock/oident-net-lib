@@ -1,8 +1,8 @@
 namespace OIdentNetLib.Infrastructure.Database;
 
-public class ClientSession
+public class TokenSession : BaseModel
 {
-    public Guid? ClientSessionId { get; set; }
+    public Guid? TokenSessionId { get; set; }
     public DateTime? SessionCreatedAt { get; set; }
     public DateTime? SessionExpiresAt { get; set; }
     public Guid? RefreshTokenId { get; set; }
@@ -12,5 +12,6 @@ public class ClientSession
     public Guid? ClientId { get; set; }
     public Client? Client { get; set; }
     
-    public object? CustomObject { get; set; }
+    public Guid? UserId { get; set; }
+    public User? User { get; set; }
 }

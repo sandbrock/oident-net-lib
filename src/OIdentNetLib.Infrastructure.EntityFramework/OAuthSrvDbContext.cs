@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using OIdentNetLib.Infrastructure.EntityFramework.Entities;
+using OIdentNetLib.Infrastructure.Database;
+using OIdentNetLib.Infrastructure.EntityFramework.SchemaMapping;
 
 namespace OIdentNetLib.Infrastructure.EntityFramework;
 
@@ -17,19 +18,14 @@ public class OAuthSrvDbContext : DbContext
     public DbSet<ClientRedirectUri> ClientRedirectUris { get; set; }
     public DbSet<Tenant> Tenants { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        base.OnConfiguring(optionsBuilder);
-    }
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        Audience.InitializeModelSchema(modelBuilder);
-        AudienceScope.InitializeModelSchema(modelBuilder);
-        Client.InitializeModelSchema(modelBuilder);
-        ClientAudienceScope.InitializeModelSchema(modelBuilder);
-        ClientRedirectUri.InitializeModelSchema(modelBuilder);
-        Tenant.InitializeModelSchema(modelBuilder);
+        AudienceMapping.InitializeModelSchema(modelBuilder);
+        AudienceScopeMapping.InitializeModelSchema(modelBuilder);
+        ClientMapping.InitializeModelSchema(modelBuilder);
+        ClientAudienceScopeMapping.InitializeModelSchema(modelBuilder);
+        ClientRedirectUriMapping.InitializeModelSchema(modelBuilder);
+        TenantMapping.InitializeModelSchema(modelBuilder);
         
         base.OnModelCreating(modelBuilder);
     }
@@ -42,7 +38,7 @@ public class OAuthSrvDbContext : DbContext
     
     private void SetTimestamps()
     {
-        var entries = ChangeTracker.Entries<BaseEntity>();
+        var entries = ChangeTracker.Entries<BaseModel>();
 
         foreach (var entry in entries)
         {

@@ -1,39 +1,32 @@
 using Microsoft.EntityFrameworkCore;
+using OIdentNetLib.Infrastructure.Database;
 
-namespace OIdentNetLib.Infrastructure.EntityFramework.Entities;
+namespace OIdentNetLib.Infrastructure.EntityFramework.SchemaMapping;
 
-public class ClientAudienceScope : BaseEntity
+public static class ClientAudienceScopeMapping
 {
-    public Guid? ClientId { get; set; }
-
-    public Client? Client { get; set; }
-
-    public Guid? AudienceScopeId { get; set; }
-    
-    public AudienceScope? AudienceScope { get; set; }
-    
     public static void InitializeModelSchema(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<ClientAudienceScope>(entity =>
         {
-            InitializeBaseEntity(entity);
-            
             entity.ToTable("client_audience_scope");
 
             entity.HasKey(e => new { e.ClientId, e.AudienceScopeId });
             
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
             entity.Property(e => e.ClientId).HasColumnName("client_id");
             entity.Property(e => e.AudienceScopeId).HasColumnName("audience_scope_id");
 
             entity
                 .HasOne(e => e.Client)
-                .WithMany(e => e.AudienceScopes)
+                .WithMany(e => e.ClientAudienceScopes)
                 .HasForeignKey(e => e.ClientId)
                 .HasPrincipalKey(e => e.ClientId);
 
             entity
                 .HasOne(e => e.AudienceScope)
-                .WithMany(e => e.Clients)
+                .WithMany(e => e.ClientAudienceScopes)
                 .HasForeignKey(e => e.AudienceScopeId)
                 .HasPrincipalKey(e => e.AudienceScopeId);
         });
