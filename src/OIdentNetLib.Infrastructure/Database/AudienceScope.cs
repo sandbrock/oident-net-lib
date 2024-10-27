@@ -7,6 +7,4 @@ public class AudienceScope : BaseModel
     
     public Guid? AudienceId { get; set; }
     public Audience? Audience { get; set; }
-    
-    public IList<ClientAudienceScope>? ClientAudienceScopes { get; set; }
 }

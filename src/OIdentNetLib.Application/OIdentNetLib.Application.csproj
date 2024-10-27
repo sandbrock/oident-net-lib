@@ -10,4 +10,8 @@
         <FrameworkReference Include="Microsoft.AspNetCore.App" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\OIdentNetLib.Infrastructure\OIdentNetLib.Infrastructure.csproj" />
+    </ItemGroup>
+
 </Project>

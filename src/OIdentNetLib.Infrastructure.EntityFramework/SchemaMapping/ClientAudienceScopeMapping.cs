@@ -20,13 +20,13 @@ public static class ClientAudienceScopeMapping
 
             entity
                 .HasOne(e => e.Client)
-                .WithMany(e => e.ClientAudienceScopes)
+                .WithMany()
                 .HasForeignKey(e => e.ClientId)
                 .HasPrincipalKey(e => e.ClientId);
 
             entity
                 .HasOne(e => e.AudienceScope)
-                .WithMany(e => e.ClientAudienceScopes)
+                .WithMany()
                 .HasForeignKey(e => e.AudienceScopeId)
                 .HasPrincipalKey(e => e.AudienceScopeId);
         });

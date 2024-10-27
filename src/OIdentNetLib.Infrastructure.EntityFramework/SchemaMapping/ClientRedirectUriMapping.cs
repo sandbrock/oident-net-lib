@@ -17,14 +17,15 @@ public static class ClientRedirectUriMapping
             entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
             entity.Property(e => e.ClientRedirectUriId).HasColumnName("client_redirect_uri_id");
             entity.Property(e => e.ClientId).HasColumnName("client_id");
-            entity.Property(e => e.Uri).HasColumnName("uri").HasMaxLength(2048);
+            entity.Property(e => e.Uri).HasColumnName("uri").HasMaxLength(512);
 
             entity.HasIndex(e => e.ClientId);
+            entity.HasIndex(e => e.Uri);
 
             entity
                 .HasOne<Client>()
                 .WithMany()
-                .HasForeignKey("client_id")
+                .HasForeignKey(e => e.ClientId)
                 .HasPrincipalKey(e => e.ClientId);
         });
     }

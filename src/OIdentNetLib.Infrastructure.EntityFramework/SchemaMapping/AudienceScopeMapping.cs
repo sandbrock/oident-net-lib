@@ -16,8 +16,8 @@ public static class AudienceScopeMapping
             entity.Property(e => e.CreatedAt).HasColumnName("created_at");
             entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
             entity.Property(e => e.AudienceScopeId).HasColumnName("audience_scope_id");
-            entity.Property(e => e.AudienceId).HasColumnName("audience_id");
             entity.Property(e => e.Name).HasColumnName("name").HasMaxLength(50);
+            entity.Property(e => e.AudienceId).HasColumnName("audience_id");
 
             entity.HasIndex(e => e.AudienceId);
             entity.HasIndex(e => new { e.AudienceId, e.Name }).IsUnique();
@@ -25,7 +25,7 @@ public static class AudienceScopeMapping
             entity
                 .HasOne<Audience>()
                 .WithMany()
-                .HasForeignKey("audience_id")
+                .HasForeignKey(e => e.AudienceId)
                 .HasPrincipalKey(e => e.AudienceId);
         });
     }    

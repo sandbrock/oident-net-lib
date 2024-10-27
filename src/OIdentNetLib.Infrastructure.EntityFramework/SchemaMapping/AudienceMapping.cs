@@ -15,7 +15,6 @@ public static class AudienceMapping
 
             entity.Property(e => e.CreatedAt).HasColumnName("created_at");
             entity.Property(e => e.AudienceId).HasColumnName("audience_id");
-            entity.Property(e => e.TenantId).HasColumnName("tenant_id");
             entity.Property(e => e.Name).HasColumnName("name").HasMaxLength(50);
             entity.Property(e => e.Description)
                 .HasColumnName("description")
@@ -37,6 +36,7 @@ public static class AudienceMapping
                 .HasColumnName("terms_of_service_url")
                 .HasMaxLength(2048)
                 .IsRequired(false);
+            entity.Property(e => e.TenantId).HasColumnName("tenant_id");
 
             entity.HasIndex(e => e.TenantId);
             entity.HasIndex(e => new { e.TenantId, e.Name }).IsUnique();
@@ -44,7 +44,7 @@ public static class AudienceMapping
             entity
                 .HasOne<Tenant>()
                 .WithMany()
-                .HasForeignKey("tenant_id")
+                .HasForeignKey(e => e.TenantId)
                 .HasPrincipalKey(e => e.TenantId);
         });
     }

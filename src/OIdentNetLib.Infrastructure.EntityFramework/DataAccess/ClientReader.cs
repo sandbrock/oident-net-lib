@@ -6,7 +6,7 @@ namespace OIdentNetLib.Infrastructure.EntityFramework.DataAccess;
 
 public class ClientReader : IClientReader
 {
-    public Task<Client> GetAsync(Guid clientId)
+    public Task<Client?> GetByIdAsync(Guid clientId)
     {
         throw new NotImplementedException();
     }

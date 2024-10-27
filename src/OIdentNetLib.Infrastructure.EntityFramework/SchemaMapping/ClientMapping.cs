@@ -16,13 +16,12 @@ public static class ClientMapping
             entity.Property(e => e.CreatedAt).HasColumnName("created_at");
             entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
             entity.Property(e => e.ClientId).HasColumnName("client_id");
-            entity.Property(e => e.TenantId).HasColumnName("tenant_id");
             entity.Property(e => e.Name).HasColumnName("name").HasMaxLength(50);
             entity.Property(e => e.Description)
                 .HasColumnName("description")
                 .HasMaxLength(2048)
                 .IsRequired(false);
-            entity.Property(e => e.ClientSecretHash).HasColumnName("client_secret_hash").HasMaxLength(128);
+            entity.Property(e => e.ClientSecretHash).HasColumnName("client_secret_hash").HasMaxLength(250);
             entity.Property(e => e.GrantTypes).HasColumnName("grant_types");
             entity.Property(e => e.IconUrl)
                 .HasColumnName("icon_url")
@@ -32,6 +31,7 @@ public static class ClientMapping
                 .HasColumnName("privacy_uri")
                 .HasMaxLength(2048)
                 .IsRequired(false);
+            entity.Property(e => e.TenantId).HasColumnName("tenant_id");
 
             entity.HasIndex(e => e.TenantId);
             entity.HasIndex(e => new { e.TenantId, e.Name }).IsUnique();
@@ -39,7 +39,7 @@ public static class ClientMapping
             entity
                 .HasOne<Tenant>()
                 .WithMany()
-                .HasForeignKey("tenant_id")
+                .HasForeignKey(e => e.TenantId)
                 .HasPrincipalKey(e => e.TenantId);
         });
     }

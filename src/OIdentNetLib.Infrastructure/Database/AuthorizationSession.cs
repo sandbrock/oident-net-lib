@@ -8,6 +8,11 @@ public class AuthorizationSession : BaseModel
     public string? Scope { get; set; }
     public string? CodeChallenge { get; set; }
     public string? CodeChallengeMethod { get; set; }
+    public string? AuthorizationCode { get; set; }
+    public DateTime? ExpiresAt { get; set; }
+    
+    public Guid? TenantId { get; set; }
+    public Tenant? Tenant { get; set; }
     
     public Guid? ClientId { get; set; }
     public Client? Client { get; set; }
