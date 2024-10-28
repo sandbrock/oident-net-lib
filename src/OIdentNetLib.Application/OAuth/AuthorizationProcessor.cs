@@ -109,23 +109,14 @@ public class AuthorizationProcessor(
     private GenericHttpResponse<ProcessAuthorizationResponse> ValidateRequestObject(ProcessAuthorizationRequest request)
     {
         // Get object validation results
-        var objectValidationResults = ObjectValidator.Validate(request);
-        
-        if (objectValidationResults.IsValid)
-            return GenericHttpResponse<ProcessAuthorizationResponse>.CreateSuccessResponse(HttpStatusCode.OK);
-        
-        var errorMessage = new StringBuilder();
-        foreach(var validationResult in objectValidationResults.ValidationResults)
-        {
-            if (string.IsNullOrEmpty(validationResult.ErrorMessage))
-                continue;
+        var objectValidationResults = ObjectValidator.ValidateObject(request);
 
-            errorMessage.AppendLine(validationResult.ErrorMessage);
-        }
-            
+        if (objectValidationResults.IsSuccess)
+            return GenericHttpResponse<ProcessAuthorizationResponse>.CreateSuccessResponse(HttpStatusCode.OK);
+
         return GenericHttpResponse<ProcessAuthorizationResponse>.CreateErrorResponse(
-            HttpStatusCode.BadRequest,
-            OAuthErrorTypes.InvalidRequest,
-            errorMessage.ToString());
+            objectValidationResults.StatusCode,
+            objectValidationResults.Error,
+            objectValidationResults.ErrorDescription);
     }
 }

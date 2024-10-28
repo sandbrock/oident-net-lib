@@ -4,5 +4,5 @@ namespace OIdentNetLib.Application.OAuth.Contracts;
 
 public interface IAuthorizationCodeProcessor
 {
-    Task<ProcessAuthorizationCodeResponse> ProcessAsync(ProcessAuthoriziationCodeRequest request);
+    Task<ProcessAuthorizationCodeResponse> ProcessAsync(ProcessAuthoriziationCodeRequest processAuthoriziationCodeRequest);
 }

@@ -10,6 +10,7 @@ public class Client : BaseModel
     public string? GrantTypes { get; set; }
     public string? IconUrl { get; set; }
     public string? PrivacyUri { get; set; }
+    public ClientType? ClientType { get; set; }
     
     public Guid? TenantId { get; set; }
     public Tenant? Tenant { get; set; }
@@ -18,4 +19,9 @@ public class Client : BaseModel
     
     public Dictionary<string, string>? CustomProperties { get; set; }
     public object? CustomObject { get; set; }
+
+    public bool IsSecureClient
+    {
+        get => ClientType != Database.ClientType.SinglePageApplication;
+    }
 }

@@ -32,6 +32,9 @@ public static class ClientMapping
                 .HasMaxLength(2048)
                 .IsRequired(false);
             entity.Property(e => e.TenantId).HasColumnName("tenant_id");
+            entity.Property(e => e.ClientType)
+                .HasColumnName("client_type")
+                .HasMaxLength(25);
 
             entity.HasIndex(e => e.TenantId);
             entity.HasIndex(e => new { e.TenantId, e.Name }).IsUnique();

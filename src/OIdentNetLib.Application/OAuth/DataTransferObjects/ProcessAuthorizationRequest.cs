@@ -13,6 +13,9 @@ public class ProcessAuthorizationRequest
     [Required(ErrorMessage = "client_id is required.")]
     public Guid? ClientId { get; set; }
     
+    [JsonPropertyName("client_secret")]
+    public string? ClientSecret { get; set; }
+    
     [JsonPropertyName("redirect_uri")]
     [Required(ErrorMessage = "redirect_uri is required.")]
     public Uri? RedirectUri { get; set; }

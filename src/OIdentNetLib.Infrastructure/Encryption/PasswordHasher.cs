@@ -29,8 +29,11 @@ public class PasswordHasher : IPasswordHasher
         return Convert.ToBase64String(hashBytes);
     }
 
-    public bool VerifyPassword(string hashedPassword, string password)
+    public bool VerifyPassword(string? hashedPassword, string? password)
     {
+        if (string.IsNullOrEmpty(hashedPassword) || string.IsNullOrEmpty(password))
+            return false;
+        
         // Extract the bytes from the base64 encoded hash
         var hashBytes = Convert.FromBase64String(hashedPassword);
 
