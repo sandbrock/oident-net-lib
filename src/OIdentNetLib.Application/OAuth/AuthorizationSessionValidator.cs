@@ -9,10 +9,16 @@ using OIdentNetLib.Infrastructure.Encryption.Models;
 
 namespace OIdentNetLib.Application.OAuth;
 
+/// <summary>
+/// Validates the user has a valid authorization session. 
+/// This session is created when the user successfully fulfills 
+/// the requirements of the the authorization endpoint.
+/// </summary>
 public class AuthorizationSessionValidator(
     ILogger<AuthorizationSessionValidator> logger,
     IAuthorizationSessionReader authorizationSessionReader,
-    IAuthorizationSessionWriter authorizationSessionWriter) : IAuthorizationSessionValidator
+    IAuthorizationSessionWriter authorizationSessionWriter
+) : IAuthorizationSessionValidator
 {
     public async Task<GenericHttpResponse<ValidateSessionResponse>> ValidateAsync(ValidateSessionRequest validateSessionRequest)
     {

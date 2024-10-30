@@ -1,5 +1,4 @@
 using System.Net;
-using System.Text;
 using Microsoft.Extensions.Options;
 using OIdentNetLib.Application.Common;
 using OIdentNetLib.Application.OAuth.Contracts;
@@ -12,12 +11,16 @@ using OIdentNetLib.Infrastructure.Encryption.Contracts;
 
 namespace OIdentNetLib.Application.OAuth;
 
+/// <summary>
+/// Processes the authorization OAuth endpoint.
+/// </summary>
 public class AuthorizationProcessor(
     IOptions<OIdentOptions> oidentOptions,
     IClientValidator clientValidator,
     IAuthorizationCodeCreator authorizationCodeCreator,
     IAuthorizationSessionValidator authorizationSessionValidator,
-    IAuthorizationSessionWriter authorizationSessionWriter) : IAuthorizationProcessor
+    IAuthorizationSessionWriter authorizationSessionWriter
+) : IAuthorizationProcessor
 {
     public async Task<GenericHttpResponse<ProcessAuthorizationResponse>> ProcessAsync(
         ProcessAuthorizationRequest processAuthorizationRequest,
@@ -27,6 +30,15 @@ public class AuthorizationProcessor(
         var validateRequestResult = ValidateRequestObject(processAuthorizationRequest);
         if (!validateRequestResult.IsSuccess)
             return validateRequestResult;
+        
+        // Validate the response type
+        if (processAuthorizationRequest.ResponseType != "code")
+        {
+            return GenericHttpResponse<ProcessAuthorizationResponse>.CreateErrorResponse(
+                HttpStatusCode.BadRequest,
+                OAuthErrorTypes.InvalidRequest,
+                "Invalid response_type");
+        }
         
         // Validate the client
         var validateClientRequest = new ValidateClientRequest
@@ -46,8 +58,7 @@ public class AuthorizationProcessor(
         }
 
         // Check for existing session
-        var validateSessionResponse = 
-            await authorizationSessionValidator.ValidateAsync(validateSessionRequest);
+        var validateSessionResponse = await authorizationSessionValidator.ValidateAsync(validateSessionRequest);
         string redirectUrl;
         if (!validateSessionResponse.IsSuccess)
         {

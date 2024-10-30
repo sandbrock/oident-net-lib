@@ -4,5 +4,5 @@ namespace OIdentNetLib.Application.OAuth.Contracts;
 
 public interface IClientCredentialsProcessor
 {
-    Task<ProcessClientCredentialsResponse> ProcessAsync(ProcessClientCredentialsRequest request);
+    Task<ProcessTokenResponse> ProcessAsync(ProcessTokenRequest request);
 }

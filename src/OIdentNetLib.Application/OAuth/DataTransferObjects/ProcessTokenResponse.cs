@@ -1,8 +1,8 @@
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace OIdentNetLib.Application.OAuth.DataTransferObjects;
 
-public class ProcessClientCredentialsResponse
+public class ProcessTokenResponse
 {
     [JsonPropertyName("access_token")]
     public string? AccessToken { get; set; }
@@ -10,14 +10,8 @@ public class ProcessClientCredentialsResponse
     [JsonPropertyName("token_type")]
     public string? TokenType { get; set; }
     
-    [JsonPropertyName("error")]
-    public string? Error { get; set; }
-    
-    [JsonPropertyName("error_description")]
-    public string? ErrorDescription { get; set; }
-    
     [JsonPropertyName("expires_in")]
-    public int? ExpiresIn { get; set; }
+    public DateTime? ExpiresIn { get; set; }
     
     [JsonPropertyName("refresh_token")]
     public string? RefreshToken { get; set; }

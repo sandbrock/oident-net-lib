@@ -1,8 +1,9 @@
+using OIdentNetLib.Application.Common;
 using OIdentNetLib.Application.OAuth.DataTransferObjects;
 
 namespace OIdentNetLib.Application.OAuth.Contracts;
 
 public interface IAuthorizationCodeProcessor
 {
-    Task<ProcessAuthorizationCodeResponse> ProcessAsync(ProcessAuthoriziationCodeRequest processAuthoriziationCodeRequest);
+    Task<GenericHttpResponse<ProcessTokenResponse>> ProcessAsync(ProcessTokenRequest processTokenRequest);
 }

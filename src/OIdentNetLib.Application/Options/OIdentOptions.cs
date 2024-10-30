@@ -2,6 +2,9 @@ using System.Text.Json.Serialization;
 
 namespace OIdentNetLib.Application.Options;
 
+/// <summary>
+/// A list of options used by the OIdentNetLib framework.
+/// </summary>
 public class OIdentOptions
 {
     [JsonPropertyName("LoginUri")]

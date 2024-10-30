@@ -4,5 +4,5 @@ namespace OIdentNetLib.Application.OAuth.Contracts;
 
 public interface IRefreshTokenProcessor
 {
-    Task<ProcessRefreshTokenResponse> ProcessAsync(ProcessRefreshTokenRequest request);
+    Task<ProcessTokenResponse> ProcessAsync(ProcessTokenRequest request);
 }

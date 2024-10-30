@@ -11,11 +11,16 @@ using OIdentNetLib.Infrastructure.Encryption.Models;
 
 namespace OIdentNetLib.Application.OAuth;
 
+/// <summary>
+/// Validates the user has a valid token session. The lifespan of a token 
+/// session is managed by the first refresh_token issued.
+/// </summary>
 public class TokenSessionValidator(
     ILogger<AuthorizationSessionValidator> logger,
     IClientReader clientReader,
     IUserReader userReader,
-    IJwtValidator jwtValidator) : ITokenSessionValidator
+    IJwtValidator jwtValidator
+) : ITokenSessionValidator
 {
     public async Task<GenericHttpResponse<ValidateSessionResponse>> ValidateAsync(ValidateSessionRequest validateSessionRequest)
     {

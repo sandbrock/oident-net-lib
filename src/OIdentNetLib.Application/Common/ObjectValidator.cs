@@ -2,11 +2,14 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Text;
-using OIdentNetLib.Application.OAuth.DataTransferObjects;
 using OIdentNetLib.Application.OAuth.Models;
 
 namespace OIdentNetLib.Application.Common;
 
+/// <summary>
+/// Uses the .NET built-in object validation to check that
+/// property values meet those requirements.
+/// </summary>
 public static class ObjectValidator
 {
     public static ObjectValidatorResults Validate([NotNull] object? instance)

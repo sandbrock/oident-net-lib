@@ -7,10 +7,14 @@ using OIdentNetLib.Application.OAuth.Models;
 
 namespace OIdentNetLib.Application.OAuth;
 
+/// <summary>
+/// Validates the client session. It validates both authorization and token sessions.
+/// </summary>
 public class SessionValidator(
     ILogger<SessionValidator> logger,
     IAuthorizationSessionValidator authorizationSessionValidator,
-    ITokenSessionValidator tokenSessionValidator) : ISessionValidator
+    ITokenSessionValidator tokenSessionValidator
+) : ISessionValidator
 {
     public async Task<GenericHttpResponse<ValidateSessionResponse>> ValidateAsync(ValidateSessionRequest validateSessionRequest)
     {

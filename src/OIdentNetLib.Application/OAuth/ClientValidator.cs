@@ -9,10 +9,14 @@ using OIdentNetLib.Infrastructure.Encryption.Contracts;
 
 namespace OIdentNetLib.Application.OAuth;
 
+/// <summary>
+/// Validates and authenticates the client.
+/// </summary>
 public class ClientValidator(
     ILogger<ClientValidator> logger,
     IClientReader clientReader,
-    IPasswordHasher passwordHasher) : IClientValidator
+    IPasswordHasher passwordHasher
+) : IClientValidator
 {
     public async Task<GenericHttpResponse<ValidateClientResponse>> ValidateAsync(ValidateClientRequest validateClientRequest)
     {
@@ -27,7 +31,7 @@ public class ClientValidator(
                 "Invalid client_id.");
         }
         
-        // Valdate the value of client_secret
+        // Check if client_secret is required
         if (client.IsSecureClient && string.IsNullOrEmpty(validateClientRequest.ClientSecret))
         {
             logger.LogInformation("Client {ClientId} requires a client_secret.", validateClientRequest.ClientId);
@@ -37,19 +41,23 @@ public class ClientValidator(
                 "client_secret is required.");
         }
 
-        bool isSecretValid = passwordHasher.VerifyPassword(
-            client.ClientSecretHash, 
-            validateClientRequest.ClientSecret);
-        if (client.IsSecureClient && !isSecretValid)
+        // Validate the value of client_secret
+        if (client.IsSecureClient)
         {
-            logger.LogInformation("Request for {ClientId} has an invalid client_secret.", 
-                validateClientRequest.ClientId);
-            return GenericHttpResponse<ValidateClientResponse>.CreateErrorResponse(
-                HttpStatusCode.BadRequest,
-                OAuthErrorTypes.InvalidRequest,
-                "Invalid client_secret.");
+            bool isSecretValid = passwordHasher.VerifyPassword(
+                client.ClientSecretHash,
+                validateClientRequest.ClientSecret);
+            if (client.IsSecureClient && !isSecretValid)
+            {
+                logger.LogInformation("Request for {ClientId} has an invalid client_secret.",
+                    validateClientRequest.ClientId);
+                return GenericHttpResponse<ValidateClientResponse>.CreateErrorResponse(
+                    HttpStatusCode.BadRequest,
+                    OAuthErrorTypes.InvalidRequest,
+                    "Invalid client_secret.");
+            }
         }
-        
+
         // Validate the client's redirect_uris
         if (client.RedirectUris is null || client.RedirectUris.Count == 0)
         {
@@ -79,6 +87,7 @@ public class ClientValidator(
                 e => e.Uri == validateClientRequest.RedirectUri),
         };
         
+        // Return the response
         return GenericHttpResponse<ValidateClientResponse>.CreateSuccessResponseWithData(
             HttpStatusCode.OK, 
             response);

@@ -3,6 +3,11 @@ using Microsoft.AspNetCore.Http;
 
 namespace OIdentNetLib.Application.Common;
 
+/// <summary>
+/// Represents a generic response that is not tied to the HTTP
+/// protocol libraries. This allows other clients to consume
+/// the Application layer, including APIs and console applications.
+/// </summary>
 public class GenericHttpResponse<T>
 {
     /// <summary>
