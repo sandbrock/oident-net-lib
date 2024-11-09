@@ -1,3 +1,4 @@
+using OIdentNetLib.Application.Common;
 using OIdentNetLib.Application.OAuth.Contracts;
 using OIdentNetLib.Application.OAuth.DataTransferObjects;
 
@@ -8,7 +9,9 @@ namespace OIdentNetLib.Application.OAuth;
 /// </summary>
 public class ClientCredentialsProcessor : IClientCredentialsProcessor
 {
-    public async Task<ProcessTokenResponse> ProcessAsync(ProcessTokenRequest request)
+    public async Task<GenericHttpResponse<ProcessTokenResponse>> ProcessAsync(
+        RequestMetadata requestMetadata,
+        ProcessTokenRequest request)
     {
         await Task.CompletedTask;
         

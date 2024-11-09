@@ -1,8 +1,11 @@
+using OIdentNetLib.Application.Common;
 using OIdentNetLib.Application.OAuth.DataTransferObjects;
 
 namespace OIdentNetLib.Application.OAuth.Contracts;
 
 public interface IRefreshTokenProcessor
 {
-    Task<ProcessTokenResponse> ProcessAsync(ProcessTokenRequest request);
+    Task<GenericHttpResponse<ProcessTokenResponse>> ProcessAsync(
+        RequestMetadata requestMetadata,
+        ProcessTokenRequest request);
 }

@@ -1,11 +1,11 @@
-using OIdentNetLib.Application.Common;
+﻿using OIdentNetLib.Application.Common;
 using OIdentNetLib.Application.OAuth.DataTransferObjects;
 
 namespace OIdentNetLib.Application.OAuth.Contracts;
 
-public interface IClientCredentialsProcessor
+public interface ITokenProcessor
 {
     Task<GenericHttpResponse<ProcessTokenResponse>> ProcessAsync(
-        RequestMetadata requestMetadata,
-        ProcessTokenRequest request);
+        RequestMetadata host, 
+        ProcessTokenRequest processTokenRequest);
 }

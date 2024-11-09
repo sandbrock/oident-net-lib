@@ -5,5 +5,7 @@ namespace OIdentNetLib.Application.OAuth.Contracts;
 
 public interface IAuthorizationCodeProcessor
 {
-    Task<GenericHttpResponse<ProcessTokenResponse>> ProcessAsync(ProcessTokenRequest processTokenRequest);
+    Task<GenericHttpResponse<ProcessTokenResponse>> ProcessAsync(
+        RequestMetadata requestMetadata, 
+        ProcessTokenRequest processTokenRequest);
 }

@@ -23,6 +23,7 @@ public class AuthorizationProcessor(
 ) : IAuthorizationProcessor
 {
     public async Task<GenericHttpResponse<ProcessAuthorizationResponse>> ProcessAsync(
+        RequestMetadata requestMetadata,
         ProcessAuthorizationRequest processAuthorizationRequest,
         ValidateSessionRequest validateSessionRequest)
     {

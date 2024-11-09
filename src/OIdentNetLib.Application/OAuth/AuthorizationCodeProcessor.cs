@@ -19,6 +19,7 @@ public class AuthorizationCodeProcessor(
 ) : IAuthorizationCodeProcessor
 {
     public async Task<GenericHttpResponse<ProcessTokenResponse>> ProcessAsync(
+        RequestMetadata requestMetadata,
         ProcessTokenRequest processTokenRequest)
     {
         // Validate the request object
