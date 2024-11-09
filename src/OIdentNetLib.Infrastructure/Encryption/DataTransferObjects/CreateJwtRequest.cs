@@ -2,7 +2,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace OIdentNetLib.Infrastructure.Encryption.DataTransferObjects;
 
-public class MakeJwtRequest
+public class CreateJwtRequest
 {
     public JsonWebKey? Jwk { get; set; }
     public string? Issuer { get; set; }

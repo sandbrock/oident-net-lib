@@ -4,5 +4,5 @@ namespace OIdentNetLib.Infrastructure.Encryption.Contracts;
 
 public interface IJwtCreator
 {
-    MakeJwtResponse Create(MakeJwtRequest request);
+    CreateJwtResponse Create(CreateJwtRequest request);
 }

@@ -8,6 +8,8 @@ using OIdentNetLib.Application.OAuth.Models;
 using OIdentNetLib.Application.Options;
 using OIdentNetLib.Infrastructure.Database;
 using OIdentNetLib.Infrastructure.Database.Contracts;
+using OIdentNetLib.Infrastructure.Encryption.Contracts;
+using OIdentNetLib.Infrastructure.Encryption.DataTransferObjects;
 
 namespace OIdentNetLib.Application.OAuth;
 
@@ -15,7 +17,8 @@ public class TokenSessionProcessor(
     ILogger<TokenSessionProcessor> logger,
     IOptions<OIdentOptions> oidentOptions,
     ITokenSessionReader tokenSessionReader,
-    ITokenSessionWriter tokenSessionWriter
+    ITokenSessionWriter tokenSessionWriter,
+    IJwtCreator jwtCreator
 ) : ITokenSessionProcessor
 {
     public async Task<GenericHttpResponse<ProcessTokenSessionResponse>> ProcessAsync(
@@ -55,6 +58,15 @@ public class TokenSessionProcessor(
         }
         
         // Create the access token
+        var createJwtRequest = new CreateJwtRequest
+        {
+            Jwk = null,
+            Issuer = oidentOptions.Value.JwtIssuer,
+            Jti = Guid.NewGuid().ToString(),
+            Sub = tokenSession.UserId.ToString(),
+            Azp = tokenSession.UserId.ToString(),
+            SessionId = processTokenSessionRequest.SessionId.ToString(),
+        };
         
 
         await Task.CompletedTask;

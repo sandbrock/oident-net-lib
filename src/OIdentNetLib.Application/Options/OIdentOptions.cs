@@ -15,4 +15,7 @@ public class OIdentOptions
     
     [JsonPropertyName("TokenSessionExpirationInMinutes")]
     public int TokenSessionExpirationInMinutes { get; set; }
+    
+    [JsonPropertyName("JwtIssuer")]
+    public string? JwtIssuer { get; set; }
 }

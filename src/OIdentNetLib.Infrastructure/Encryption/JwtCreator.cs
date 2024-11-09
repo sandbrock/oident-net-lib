@@ -9,7 +9,7 @@ namespace OIdentNetLib.Infrastructure.Encryption;
 
 public class JwtCreator : IJwtCreator
 {
-    public MakeJwtResponse Create(MakeJwtRequest request)
+    public CreateJwtResponse Create(CreateJwtRequest request)
     {
         ArgumentNullException.ThrowIfNull(request.Jwk);
         
@@ -66,7 +66,7 @@ public class JwtCreator : IJwtCreator
         var tokenHandler = new JwtSecurityTokenHandler();
         var token = tokenHandler.CreateJwtSecurityToken(descriptor);
 
-        var response = new MakeJwtResponse
+        var response = new CreateJwtResponse
         {
             JwtId = request.Jti,
             Jwt = tokenHandler.WriteToken(token),

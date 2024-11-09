@@ -24,11 +24,11 @@ public class TokenSessionValidator(
 {
     public async Task<GenericHttpResponse<ValidateSessionResponse>> ValidateAsync(ValidateSessionRequest validateSessionRequest)
     {
+        // Validate the JWT
         var validateJwtRequest = new ValidateJwtRequest
         {
             Jwt = validateSessionRequest.RefreshToken,
         };
-        
         var validateJwtResponse = await jwtValidator.ValidateAsync(validateJwtRequest);
         if (!validateJwtResponse.IsValid)
         {
@@ -38,11 +38,13 @@ public class TokenSessionValidator(
                 "Invalid refresh token.");
         }
 
+        // Read a user session
         if (validateJwtResponse.PrincipalType == JwtPrincipalType.User)
         {
             return await ReadUserSessionAsync(validateJwtResponse);
         }
 
+        // Read a client session
         return await ReadClientSessionAsync(validateJwtResponse);
     }
 

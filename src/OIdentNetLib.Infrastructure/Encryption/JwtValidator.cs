@@ -1,13 +1,14 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Cryptography;
 using Microsoft.IdentityModel.Tokens;
+using OIdentNetLib.Infrastructure.Database.Contracts;
 using OIdentNetLib.Infrastructure.Encryption.Contracts;
 using OIdentNetLib.Infrastructure.Encryption.DataTransferObjects;
 using OIdentNetLib.Infrastructure.Encryption.Models;
 
 namespace OIdentNetLib.Infrastructure.Encryption;
 
-public class JwtValidator : IJwtValidator
+public class JwtValidator() : IJwtValidator
 {
     public async Task<ValidateJwtResponse> ValidateAsync(ValidateJwtRequest request)
     {

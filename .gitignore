@@ -1,6 +1,10 @@
+_ReSharper.Caches/
+.idea/
+.vs/
+.vscode/
 bin/
 obj/
-/packages/
+packages/
+
 riderModule.iml
-/_ReSharper.Caches/
-/.idea/
+*.user

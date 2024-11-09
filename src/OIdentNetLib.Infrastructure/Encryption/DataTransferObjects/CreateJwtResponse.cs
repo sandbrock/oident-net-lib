@@ -1,6 +1,6 @@
 namespace OIdentNetLib.Infrastructure.Encryption.DataTransferObjects;
 
-public class MakeJwtResponse
+public class CreateJwtResponse
 {
     public string? JwtId { get; set; }
     public string? Jwt { get; set; }
