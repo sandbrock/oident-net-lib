@@ -28,7 +28,7 @@ public class ClientValidator(
             return GenericHttpResponse<ValidateClientResponse>.CreateErrorResponse(
                 HttpStatusCode.BadRequest,
                 OAuthErrorTypes.InvalidRequest,
-                "Invalid client_id.");
+                "Invalid client_id parameter.");
         }
         
         // Check if client_secret is required
@@ -52,9 +52,9 @@ public class ClientValidator(
                 logger.LogInformation("Request for {ClientId} has an invalid client_secret.",
                     validateClientRequest.ClientId);
                 return GenericHttpResponse<ValidateClientResponse>.CreateErrorResponse(
-                    HttpStatusCode.BadRequest,
-                    OAuthErrorTypes.InvalidRequest,
-                    "Invalid client_secret.");
+                    HttpStatusCode.Unauthorized,
+                    OAuthErrorTypes.InvalidClient,
+                    "Invalid client credentials.");
             }
         }
 
@@ -65,7 +65,7 @@ public class ClientValidator(
             return GenericHttpResponse<ValidateClientResponse>.CreateErrorResponse(
                 HttpStatusCode.BadRequest,
                 OAuthErrorTypes.InvalidRequest,
-                "Invalid redirect_uri.");
+                "Invalid redirect_uri parameter.");
         }
         
         // Validate the requested redirect_uri
@@ -75,7 +75,7 @@ public class ClientValidator(
             return GenericHttpResponse<ValidateClientResponse>.CreateErrorResponse(
                 HttpStatusCode.BadRequest,
                 OAuthErrorTypes.InvalidRequest,
-                "Invalid redirect_uri.");
+                "Invalid redirect_uri parameter.");
         }
 
         // Create the response object

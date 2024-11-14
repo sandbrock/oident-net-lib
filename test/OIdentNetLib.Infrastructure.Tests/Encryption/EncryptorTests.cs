@@ -3,6 +3,7 @@ using OIdentNetLib.Infrastructure.Tests.Encryption.Mocks;
 
 namespace OIdentNetLib.Infrastructure.Tests.Encryption;
 
+[Trait("Category", "Unit")]
 public class EncryptorTests
 {
     [Fact]

@@ -5,8 +5,13 @@ namespace OIdentNetLib.Infrastructure.IO;
 
 public class JsonSerializer : IJsonSerializer
 {
-    public async Task<string> SerializeAsync(object value)
+    public async Task<string> SerializeAsync(object? value)
     {
+        if (value is null)
+        {
+            return string.Empty;
+        }
+        
         var options = new JsonSerializerOptions() { WriteIndented = true };
         using var streamWriter = new MemoryStream();
         await System.Text.Json.JsonSerializer.SerializeAsync(streamWriter, value, options);
