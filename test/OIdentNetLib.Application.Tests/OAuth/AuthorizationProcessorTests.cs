@@ -48,7 +48,10 @@ public class AuthorizationProcessorTests
         };
         
         // Act
-        var response = await authorizationProcessor.ProcessAsync(processAuthorizationRequest, new ValidateSessionRequest());
+        var response = await authorizationProcessor.ProcessAsync(
+            new RequestMetadata(),
+            processAuthorizationRequest, 
+            new ValidateSessionRequest());
         
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -89,7 +92,10 @@ public class AuthorizationProcessorTests
         };
         
         // Act
-        var response = await authorizationProcessor.ProcessAsync(processAuthorizationRequest, new ValidateSessionRequest());
+        var response = await authorizationProcessor.ProcessAsync(
+            new RequestMetadata(),
+            processAuthorizationRequest, 
+            new ValidateSessionRequest());
         
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -130,7 +136,10 @@ public class AuthorizationProcessorTests
         };
         
         // Act
-        var response = await authorizationProcessor.ProcessAsync(processAuthorizationRequest, new ValidateSessionRequest());
+        var response = await authorizationProcessor.ProcessAsync(
+            new RequestMetadata(),
+            processAuthorizationRequest, 
+            new ValidateSessionRequest());
         
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
