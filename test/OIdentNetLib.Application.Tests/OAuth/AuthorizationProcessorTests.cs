@@ -245,7 +245,7 @@ public class AuthorizationProcessorTests
     }
     
     [Fact]
-    public async Task ProcessAsync_ValidSession_RedirectsWithOk()
+    public async Task ProcessAsync_ValidSession_RedirectsToRedirectUri()
     {
         // Arrange
         var clientId = Guid.NewGuid();
@@ -312,5 +312,72 @@ public class AuthorizationProcessorTests
         response.Uri.Should().NotBeNull();
         response.Uri!.ToString().Should().Be("https://example.com/callback?code=code&state=state");
     }
-    
+
+        [Fact]
+    public async Task ProcessAsync_InvalidSession_RedirectsToLoginUri()
+    {
+        // Arrange
+        var clientId = Guid.NewGuid();
+        var clientRedirectId = Guid.NewGuid();
+        
+        var options = new Mock<IOptions<OIdentOptions>>();
+        options.Setup(o => o.Value)
+            .Returns(new OIdentOptions()
+            {
+                LoginUri = new Uri("https://example.com/login")
+            });
+        var clientValidator = new Mock<IClientValidator>();
+        clientValidator.Setup(x => x.ValidateAsync(It.IsAny<ValidateClientRequest>()))
+            .ReturnsAsync(GenericHttpResponse<ValidateClientResponse>.CreateSuccessResponseWithData(
+                HttpStatusCode.OK,
+                new ValidateClientResponse()
+                {
+                    ClientId = clientId,
+                    ClientName = "test-client",
+                    ClientRedirectUri = new ClientRedirectUri()
+                    {
+                        ClientRedirectUriId = clientRedirectId,
+                        Uri = new Uri("https://example.com/callback")
+                    }
+                }));
+        var authorizationCodeCreator = new Mock<IAuthorizationCodeCreator>();
+        authorizationCodeCreator.Setup(c => c.Create(It.IsAny<int>())).Returns("code");
+        var authorizationSessionValidator = new Mock<IAuthorizationSessionValidator>();
+        authorizationSessionValidator.Setup(v => v.ValidateAsync(It.IsAny<ValidateSessionRequest>()))
+            .ReturnsAsync(GenericHttpResponse<ValidateSessionResponse>.CreateRedirectResponse(
+                new Uri("https://example.com/login"),
+                OIdentErrors.InvalidSession,
+                null,
+                null));
+        var authorizationSessionWriter = new Mock<IAuthorizationSessionWriter>();
+        var authorizationProcessor = new AuthorizationProcessor(
+            options.Object,
+            clientValidator.Object,
+            authorizationCodeCreator.Object,
+            authorizationSessionValidator.Object,
+            authorizationSessionWriter.Object);
+        var processAuthorizationRequest = new ProcessAuthorizationRequest
+        {
+            ResponseType = "code",
+            ClientId = Guid.NewGuid(),
+            ClientSecret = "secret",
+            RedirectUri = new Uri("https://example.com/callback"),
+            Scope = "read write",
+            State = "state",
+            CodeChallenge = "code_challenge",
+            CodeChallengeMethod = "code_challenge_method"
+        };
+        
+        // Act
+        var response = await authorizationProcessor.ProcessAsync(
+            new RequestMetadata(),
+            processAuthorizationRequest,
+            new ValidateSessionRequest());
+        
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.Redirect);
+        response.Error.Should().BeNullOrEmpty();
+        response.Uri.Should().NotBeNull();
+        response.Uri!.ToString().Should().StartWith("https://example.com/login");
+    }
 }
