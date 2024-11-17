@@ -6,13 +6,14 @@ using OIdentNetLib.Application.OAuth.DataTransferObjects;
 using OIdentNetLib.Application.OAuth.Models;
 using OIdentNetLib.Infrastructure.Database.Contracts;
 using OIdentNetLib.Infrastructure.Encryption.Models;
+using OIdentNetLib.Infrastructure.Errors;
 
 namespace OIdentNetLib.Application.OAuth;
 
 /// <summary>
 /// Validates the user has a valid authorization session. 
 /// This session is created when the user successfully fulfills 
-/// the requirements of the the authorization endpoint.
+/// the requirements of the authorization endpoint.
 /// </summary>
 public class AuthorizationSessionValidator(
     ILogger<AuthorizationSessionValidator> logger,
@@ -29,7 +30,8 @@ public class AuthorizationSessionValidator(
                 "Authorization session not found for code {AuthorizationCode}.", 
                 validateSessionRequest.AuthorizationCode);
             return GenericHttpResponse<ValidateSessionResponse>.CreateErrorResponse(
-                HttpStatusCode.Unauthorized, 
+                HttpStatusCode.Unauthorized,
+                OIdentErrors.InvalidAuthorizationCode,
                 OAuthErrorTypes.AccessDenied,
                 "Invalid authorization code.");
         }
@@ -41,12 +43,14 @@ public class AuthorizationSessionValidator(
                 "Authorization session {AuthorizationSessionId} has expired.",
                 authSession.AuthorizationSessionId);
             return GenericHttpResponse<ValidateSessionResponse>.CreateErrorResponse(
-                HttpStatusCode.Unauthorized, 
+                HttpStatusCode.Unauthorized,
+                OIdentErrors.ExpiredAuthorizationCode,
                 OAuthErrorTypes.AccessDenied,
                 "Authorization session has expired.");
         }
 
         if (authSession.User != null)
+        {
             return GenericHttpResponse<ValidateSessionResponse>.CreateSuccessResponseWithData(
                 HttpStatusCode.OK,
                 new ValidateSessionResponse
@@ -60,13 +64,15 @@ public class AuthorizationSessionValidator(
                     TenantId = authSession.User.TenantId
                 }
             );
-        
+        }
+
         logger.LogInformation(
             "Authorization session {AuthorizationSessionId} has no user.",
             authSession.AuthorizationSessionId);
-        
+        await authorizationSessionWriter.DeleteAsync(authSession.AuthorizationSessionId!.Value);
         return GenericHttpResponse<ValidateSessionResponse>.CreateErrorResponse(
             HttpStatusCode.Unauthorized, 
+            OIdentErrors.InvalidAuthorizationCode,
             OAuthErrorTypes.AccessDenied,
             "Invalid authorization code.");
     }

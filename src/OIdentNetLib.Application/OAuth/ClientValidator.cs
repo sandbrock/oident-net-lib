@@ -6,6 +6,7 @@ using OIdentNetLib.Application.OAuth.DataTransferObjects;
 using OIdentNetLib.Application.OAuth.Models;
 using OIdentNetLib.Infrastructure.Database.Contracts;
 using OIdentNetLib.Infrastructure.Encryption.Contracts;
+using OIdentNetLib.Infrastructure.Errors;
 
 namespace OIdentNetLib.Application.OAuth;
 
@@ -27,7 +28,8 @@ public class ClientValidator(
             logger.LogInformation("Unable to locate client {ClientId}.", validateClientRequest.ClientId);
             return GenericHttpResponse<ValidateClientResponse>.CreateErrorResponse(
                 HttpStatusCode.BadRequest,
-                OAuthErrorTypes.InvalidRequest,
+                OIdentErrors.InvalidClientId,
+                OAuthErrorTypes.InvalidClient,
                 "Invalid client_id parameter.");
         }
         
@@ -37,34 +39,37 @@ public class ClientValidator(
             logger.LogInformation("Client {ClientId} requires a client_secret.", validateClientRequest.ClientId);
             return GenericHttpResponse<ValidateClientResponse>.CreateErrorResponse(
                 HttpStatusCode.BadRequest,
+                OIdentErrors.InvalidClientSecret,
                 OAuthErrorTypes.InvalidRequest,
-                "client_secret is required.");
+                "The client_secret parameter is required for the specified client.");
         }
 
         // Validate the value of client_secret
         if (client.IsSecureClient)
         {
-            bool isSecretValid = passwordHasher.VerifyPassword(
+            var isSecretValid = passwordHasher.VerifyPassword(
                 client.ClientSecretHash,
                 validateClientRequest.ClientSecret);
-            if (client.IsSecureClient && !isSecretValid)
+            if (!isSecretValid)
             {
-                logger.LogInformation("Request for {ClientId} has an invalid client_secret.",
+                logger.LogInformation("Request for {ClientId} has an invalid client_secret parameter.",
                     validateClientRequest.ClientId);
                 return GenericHttpResponse<ValidateClientResponse>.CreateErrorResponse(
                     HttpStatusCode.Unauthorized,
-                    OAuthErrorTypes.InvalidClient,
-                    "Invalid client credentials.");
+                    OIdentErrors.InvalidClientSecret,
+                    OAuthErrorTypes.UnauthorizedClient,
+                    "Invalid client_secret parameter.");
             }
         }
-
+        
         // Validate the client's redirect_uris
         if (client.RedirectUris is null || client.RedirectUris.Count == 0)
         {
             logger.LogWarning("Client {ClientId} has no redirect_uris.", client.ClientId);
             return GenericHttpResponse<ValidateClientResponse>.CreateErrorResponse(
                 HttpStatusCode.BadRequest,
-                OAuthErrorTypes.InvalidRequest,
+                OIdentErrors.InvalidRedirectUri,
+                OAuthErrorTypes.InvalidRedirectUri,
                 "Invalid redirect_uri parameter.");
         }
         
@@ -74,10 +79,11 @@ public class ClientValidator(
         {
             return GenericHttpResponse<ValidateClientResponse>.CreateErrorResponse(
                 HttpStatusCode.BadRequest,
-                OAuthErrorTypes.InvalidRequest,
+                OIdentErrors.InvalidRedirectUri,
+                OAuthErrorTypes.InvalidRedirectUri,
                 "Invalid redirect_uri parameter.");
         }
-
+        
         // Create the response object
         var response = new ValidateClientResponse
         {

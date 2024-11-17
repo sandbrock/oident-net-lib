@@ -4,6 +4,7 @@ public static class OAuthErrorTypes
 {
     public const string AccessDenied = "access_denied";
     public const string InvalidClient = "invalid_client";
+    public const string InvalidRedirectUri = "invalid_redirect_uri";
     public const string InvalidRequest = "invalid_request";
     public const string InvalidScope = "invalid_scope";
     public const string ServerError = "server_error";

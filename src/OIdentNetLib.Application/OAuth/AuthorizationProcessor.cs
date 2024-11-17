@@ -8,6 +8,7 @@ using OIdentNetLib.Application.Options;
 using OIdentNetLib.Infrastructure.Database;
 using OIdentNetLib.Infrastructure.Database.Contracts;
 using OIdentNetLib.Infrastructure.Encryption.Contracts;
+using OIdentNetLib.Infrastructure.Errors;
 
 namespace OIdentNetLib.Application.OAuth;
 
@@ -27,6 +28,39 @@ public class AuthorizationProcessor(
         ProcessAuthorizationRequest processAuthorizationRequest,
         ValidateSessionRequest validateSessionRequest)
     {
+        // Validate the client
+        var validateClientRequest = new ValidateClientRequest
+        {
+            ClientId = processAuthorizationRequest.ClientId,
+            RedirectUri = processAuthorizationRequest.RedirectUri
+        };
+        var validateClientResponse = await clientValidator.ValidateAsync(validateClientRequest);
+        
+        switch (validateClientResponse.OIdentError)
+        {
+            case OIdentErrors.InvalidClientId:
+                return GenericHttpResponse<ProcessAuthorizationResponse>.CreateErrorResponse(
+                    HttpStatusCode.BadRequest,
+                    validateClientResponse.OIdentError,
+                    validateClientResponse.Error,
+                    validateClientResponse.ErrorDescription);
+            case OIdentErrors.InvalidClientSecret:
+                return GenericHttpResponse<ProcessAuthorizationResponse>.CreateRedirectResponse(
+                    processAuthorizationRequest.RedirectUri!,
+                    OIdentErrors.InvalidClientSecret,
+                    validateClientResponse.Error,
+                    validateClientResponse.ErrorDescription);
+        }
+
+        if (!validateClientResponse.IsSuccess)
+        {
+            return GenericHttpResponse<ProcessAuthorizationResponse>.CreateErrorResponse(
+                validateClientResponse.StatusCode,
+                validateClientResponse.OIdentError,
+                validateClientResponse.Error,
+                validateClientResponse.ErrorDescription);
+        }
+        
         // Validate the request object
         var validateRequestResult = ValidateRequestObject(processAuthorizationRequest);
         if (!validateRequestResult.IsSuccess)
@@ -35,29 +69,13 @@ public class AuthorizationProcessor(
         // Validate the response type
         if (processAuthorizationRequest.ResponseType != "code")
         {
-            return GenericHttpResponse<ProcessAuthorizationResponse>.CreateErrorResponse(
-                HttpStatusCode.BadRequest,
-                OAuthErrorTypes.InvalidRequest,
-                "Invalid response_type");
+            return GenericHttpResponse<ProcessAuthorizationResponse>.CreateRedirectResponse(
+                processAuthorizationRequest.RedirectUri!,
+                OIdentErrors.InvalidResponseType,
+                OAuthErrorTypes.UnsupportedResponseType,
+                "Unsupported response_type parameter.");
         }
         
-        // Validate the client
-        var validateClientRequest = new ValidateClientRequest
-        {
-            ClientId = processAuthorizationRequest.ClientId,
-            RedirectUri = processAuthorizationRequest.RedirectUri
-        };
-        
-        var validateClientResponse = 
-            await clientValidator.ValidateAsync(validateClientRequest);
-        if (!validateClientResponse.IsSuccess)
-        {
-            return GenericHttpResponse<ProcessAuthorizationResponse>.CreateErrorResponse(
-                validateClientResponse.StatusCode,
-                validateClientResponse.Error,
-                validateClientResponse.ErrorDescription);
-        }
-
         // Check for existing session
         var validateSessionResponse = await authorizationSessionValidator.ValidateAsync(validateSessionRequest);
         string redirectUrl;
@@ -74,7 +92,10 @@ public class AuthorizationProcessor(
                 $"code_challenge_method={processAuthorizationRequest.CodeChallengeMethod}";
 
             return GenericHttpResponse<ProcessAuthorizationResponse>.CreateRedirectResponse(
-                new Uri(redirectUrl));
+                new Uri(redirectUrl),
+                OIdentErrors.ValidSessionFound,
+                null,
+                null);
         }
         
         // Create a new session
@@ -90,7 +111,11 @@ public class AuthorizationProcessor(
         if (!string.IsNullOrEmpty(processAuthorizationRequest.State))
             redirectUrl += "&{request.State}";
 
-        return GenericHttpResponse<ProcessAuthorizationResponse>.CreateRedirectResponse(new Uri(redirectUrl));
+        return GenericHttpResponse<ProcessAuthorizationResponse>.CreateRedirectResponse(
+            new Uri(redirectUrl),
+            OIdentErrors.ValidSessionFound,
+            null,
+            null);
     }
 
     private async Task<AuthorizationSession> CreateSessionAsync(
@@ -128,6 +153,7 @@ public class AuthorizationProcessor(
 
         return GenericHttpResponse<ProcessAuthorizationResponse>.CreateErrorResponse(
             objectValidationResults.StatusCode,
+            objectValidationResults.OIdentError,
             objectValidationResults.Error,
             objectValidationResults.ErrorDescription);
     }

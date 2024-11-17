@@ -4,6 +4,7 @@ using OIdentNetLib.Application.Common;
 using OIdentNetLib.Application.OAuth.Contracts;
 using OIdentNetLib.Application.OAuth.DataTransferObjects;
 using OIdentNetLib.Application.OAuth.Models;
+using OIdentNetLib.Infrastructure.Errors;
 
 namespace OIdentNetLib.Application.OAuth;
 
@@ -31,6 +32,7 @@ public class SessionValidator(
         logger.LogInformation("Either refresh_token or authorization_code must be specified.");
         return GenericHttpResponse<ValidateSessionResponse>.CreateErrorResponse(
             HttpStatusCode.Unauthorized,
+            OIdentErrors.InvalidSession,
             OAuthErrorTypes.AccessDenied,
             "No session found for request.");
     }

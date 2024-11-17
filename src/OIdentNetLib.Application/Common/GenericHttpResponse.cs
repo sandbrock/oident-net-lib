@@ -1,4 +1,6 @@
 using System.Net;
+using System.Text;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http;
 
 namespace OIdentNetLib.Application.Common;
@@ -19,11 +21,13 @@ public class GenericHttpResponse<T>
     /// An error to include in the body of the HTTP response
     /// </summary>
     public string? Error { get; set; }
-
+    
     /// <summary>
     /// An description of the error to include in the body of the HTTP response
     /// </summary>
     public string? ErrorDescription { get; set; }
+
+    public string? OIdentError { get; set; }
 
     /// <summary>
     /// Data to include in the body of the HTTP response
@@ -84,22 +88,47 @@ public class GenericHttpResponse<T>
         };
     }
     
-    public static GenericHttpResponse<T> CreateErrorResponse(HttpStatusCode statusCode, string? error, string? errorDescription)
+    public static GenericHttpResponse<T> CreateErrorResponse(
+        HttpStatusCode statusCode,
+        string? oidentError,
+        string? error,
+        string? errorDescription)
     {
         return new GenericHttpResponse<T>
         {
             StatusCode = statusCode,
+            OIdentError = oidentError,
             Error = error,
             ErrorDescription = errorDescription
         };
     }
 
-    public static GenericHttpResponse<T> CreateRedirectResponse(Uri uri)
+    public static GenericHttpResponse<T> CreateRedirectResponse(
+        Uri uri, 
+        string? oidentError,
+        string? error, 
+        string? errorDescription)
     {
+        var url = new StringBuilder();
+        url.Append(uri);
+        
+        if (!string.IsNullOrEmpty(error))
+        {
+            url.Append($"?error={error}");
+        }
+        
+        if (!string.IsNullOrEmpty(error) && !string.IsNullOrEmpty(errorDescription))
+        {
+            url.Append($"&error_description={errorDescription}");
+        }
+        
         return new GenericHttpResponse<T>
         {
             StatusCode = HttpStatusCode.Redirect,
-            Uri = uri
+            OIdentError = oidentError,
+            Error = error,
+            ErrorDescription = errorDescription,
+            Uri = new Uri(url.ToString())
         };
     }
 

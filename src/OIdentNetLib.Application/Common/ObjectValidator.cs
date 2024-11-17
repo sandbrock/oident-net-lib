@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Text;
 using OIdentNetLib.Application.OAuth.Models;
+using OIdentNetLib.Infrastructure.Errors;
 
 namespace OIdentNetLib.Application.Common;
 
@@ -19,7 +20,7 @@ public static class ObjectValidator
         var validationResults = new List<ValidationResult>();
         var validationContext = new ValidationContext(instance);
 
-        bool isValid = Validator.TryValidateObject(
+        var isValid = Validator.TryValidateObject(
             instance,
             validationContext,
             validationResults,
@@ -47,6 +48,7 @@ public static class ObjectValidator
             
         return GenericHttpResponse<object>.CreateErrorResponse(
             HttpStatusCode.BadRequest,
+            OIdentErrors.InvalidRequest,
             OAuthErrorTypes.InvalidRequest,
             errorMessage.ToString());
     }

@@ -1,4 +1,5 @@
 using System.Net;
+using System.Security.Cryptography;
 using Microsoft.Extensions.Logging;
 using OIdentNetLib.Application.Common;
 using OIdentNetLib.Application.OAuth.Contracts;
@@ -8,6 +9,7 @@ using OIdentNetLib.Infrastructure.Database.Contracts;
 using OIdentNetLib.Infrastructure.Encryption.Contracts;
 using OIdentNetLib.Infrastructure.Encryption.DataTransferObjects;
 using OIdentNetLib.Infrastructure.Encryption.Models;
+using OIdentNetLib.Infrastructure.Errors;
 
 namespace OIdentNetLib.Application.OAuth;
 
@@ -34,6 +36,7 @@ public class TokenSessionValidator(
         {
             return GenericHttpResponse<ValidateSessionResponse>.CreateErrorResponse(
                 HttpStatusCode.Unauthorized, 
+                OIdentErrors.InvalidRefreshToken,
                 OAuthErrorTypes.AccessDenied,
                 "Invalid refresh token.");
         }
@@ -57,6 +60,7 @@ public class TokenSessionValidator(
             logger.LogInformation("Unable to find client with id {ClientId}", validateJwtResponse.PrincipalId);
             return GenericHttpResponse<ValidateSessionResponse>.CreateErrorResponse(
                 HttpStatusCode.Unauthorized, 
+                OIdentErrors.InvalidRefreshToken,
                 OAuthErrorTypes.AccessDenied,
                 "Invalid refresh token.");
         }
@@ -82,6 +86,7 @@ public class TokenSessionValidator(
             logger.LogInformation($"Unable to find user with ID {validateJwtResponse.PrincipalId}.");
             return GenericHttpResponse<ValidateSessionResponse>.CreateErrorResponse(
                 HttpStatusCode.Unauthorized, 
+                OIdentErrors.InvalidRefreshToken,
                 OAuthErrorTypes.AccessDenied,
                 "Invalid refresh token.");
         }

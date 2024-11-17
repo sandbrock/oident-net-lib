@@ -10,6 +10,7 @@ using OIdentNetLib.Infrastructure.Database;
 using OIdentNetLib.Infrastructure.Database.Contracts;
 using OIdentNetLib.Infrastructure.Encryption.Contracts;
 using OIdentNetLib.Infrastructure.Encryption.DataTransferObjects;
+using OIdentNetLib.Infrastructure.Errors;
 
 namespace OIdentNetLib.Application.OAuth;
 
@@ -29,6 +30,7 @@ public class TokenSessionProcessor(
         {
             return GenericHttpResponse<ProcessTokenSessionResponse>.CreateErrorResponse(
                 HttpStatusCode.BadRequest,
+                OIdentErrors.InvalidSession,
                 OAuthErrorTypes.InvalidRequest,
                 "SessionId is required.");
         }
@@ -38,6 +40,7 @@ public class TokenSessionProcessor(
         {
             return GenericHttpResponse<ProcessTokenSessionResponse>.CreateErrorResponse(
                 HttpStatusCode.BadRequest,
+                OIdentErrors.InvalidClientId,
                 OAuthErrorTypes.InvalidRequest,
                 "ClientId is required.");
         }

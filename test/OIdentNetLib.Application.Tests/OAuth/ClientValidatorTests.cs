@@ -39,7 +39,7 @@ public class ClientValidatorTests
         // Assert
         result.Should().NotBeNull();
         result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        result.Error.Should().Be(OAuthErrorTypes.InvalidRequest);
+        result.Error.Should().Be(OAuthErrorTypes.InvalidClient);
         result.ErrorDescription.Should().Be("Invalid client_id parameter.");
     }
     
@@ -81,8 +81,8 @@ public class ClientValidatorTests
         // Assert
         result.Should().NotBeNull();
         result.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
-        result.Error.Should().Be(OAuthErrorTypes.InvalidClient);
-        result.ErrorDescription.Should().Be("Invalid client credentials.");
+        result.Error.Should().Be(OAuthErrorTypes.UnauthorizedClient);
+        result.ErrorDescription.Should().Be("Invalid client_secret parameter.");
     }
 
     [Fact]
@@ -123,7 +123,7 @@ public class ClientValidatorTests
         // Assert
         result.Should().NotBeNull();
         result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        result.Error.Should().Be(OAuthErrorTypes.InvalidRequest);
+        result.Error.Should().Be(OAuthErrorTypes.InvalidRedirectUri);
         result.ErrorDescription.Should().Be("Invalid redirect_uri parameter.");
     }
     

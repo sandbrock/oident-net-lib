@@ -5,6 +5,7 @@ using OIdentNetLib.Application.OAuth.Contracts;
 using OIdentNetLib.Application.OAuth.DataTransferObjects;
 using OIdentNetLib.Application.OAuth.Models;
 using OIdentNetLib.Infrastructure.Database.Contracts;
+using OIdentNetLib.Infrastructure.Errors;
 
 namespace OIdentNetLib.Application.OAuth;
 
@@ -12,7 +13,6 @@ namespace OIdentNetLib.Application.OAuth;
 /// Processes authorization_code OAuth flow
 /// </summary>
 public class AuthorizationCodeProcessor(
-    ILogger<AuthorizationCodeProcessor> logger,
     IClientValidator clientValidator,
     IAuthorizationSessionValidator authorizationSessionValidator,
     IAuthorizationSessionWriter authorizationSessionWriter
@@ -32,6 +32,7 @@ public class AuthorizationCodeProcessor(
         {
             return GenericHttpResponse<ProcessTokenResponse>.CreateErrorResponse(
                 HttpStatusCode.BadRequest,
+                OIdentErrors.InvalidResponseType,
                 OAuthErrorTypes.InvalidRequest,
                 "Invalid response_type");
         }
@@ -41,6 +42,7 @@ public class AuthorizationCodeProcessor(
         {
             return GenericHttpResponse<ProcessTokenResponse>.CreateErrorResponse(
                 HttpStatusCode.BadRequest,
+                OIdentErrors.InvalidClientId,
                 OAuthErrorTypes.InvalidRequest,
                 "Invalid client_id");
         }
@@ -56,6 +58,7 @@ public class AuthorizationCodeProcessor(
         {
             return GenericHttpResponse<ProcessTokenResponse>.CreateErrorResponse(
                 validateClientResponse.StatusCode,
+                validateClientResponse.OIdentError,
                 validateClientResponse.Error,
                 validateClientResponse.ErrorDescription);
         }
@@ -69,6 +72,7 @@ public class AuthorizationCodeProcessor(
         {
             return GenericHttpResponse<ProcessTokenResponse>.CreateErrorResponse(
                 validateSessionResponse.StatusCode,
+                validateClientResponse.OIdentError,
                 validateSessionResponse.Error,
                 validateSessionResponse.ErrorDescription);
         }
@@ -92,6 +96,7 @@ public class AuthorizationCodeProcessor(
 
         return GenericHttpResponse<ProcessTokenResponse>.CreateErrorResponse(
             objectValidationResults.StatusCode,
+            objectValidationResults.OIdentError,
             objectValidationResults.Error,
             objectValidationResults.ErrorDescription);
     }

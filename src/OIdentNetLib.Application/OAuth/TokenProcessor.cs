@@ -3,6 +3,7 @@ using OIdentNetLib.Application.Common;
 using OIdentNetLib.Application.OAuth.Contracts;
 using OIdentNetLib.Application.OAuth.DataTransferObjects;
 using OIdentNetLib.Application.OAuth.Models;
+using OIdentNetLib.Infrastructure.Errors;
 
 namespace OIdentNetLib.Application.OAuth;
 
@@ -21,6 +22,7 @@ public class TokenProcessor(
         {
             return GenericHttpResponse<ProcessTokenResponse>.CreateErrorResponse(
                 validateObjectResult.StatusCode,
+                validateObjectResult.OIdentError,
                 validateObjectResult.Error,
                 validateObjectResult.ErrorDescription);
         }
@@ -36,6 +38,7 @@ public class TokenProcessor(
             default:
                 return GenericHttpResponse<ProcessTokenResponse>.CreateErrorResponse(
                     HttpStatusCode.BadRequest,
+                    OIdentErrors.InvalidGrantType,
                     OAuthErrorTypes.InvalidRequest,
                     "Unsupported grant type");
         }

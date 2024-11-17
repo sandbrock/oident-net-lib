@@ -11,6 +11,5 @@ public class UserAuthorization : BaseModel
     public Guid? ClientId { get; set; }
     public Client? Client { get; set; }
     
-    public DateTime? CreatedAt { get; set; }
     public DateTime? ExpiresAt { get; set; }
 }
