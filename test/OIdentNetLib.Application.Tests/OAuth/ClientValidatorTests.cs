@@ -72,7 +72,7 @@ public class ClientValidatorTests
         {
             ClientId = Guid.NewGuid(),
             ClientSecret = "client_secret",
-            RedirectUri = new Uri("https://example.com/invalid")
+            RedirectUri = new Uri("https://example.com")
         };
 
         // Act
@@ -86,7 +86,7 @@ public class ClientValidatorTests
     }
 
     [Fact]
-    public async Task ValidateAsync_WhenUrlIsInvalid_ReturnsError()
+    public async Task ValidateAsync_WhenRedirectUriIsInvalid_ReturnsError()
     {
         // Arrange
         var logger = new Mock<ILogger<ClientValidator>>();
@@ -105,6 +105,48 @@ public class ClientValidatorTests
         var passwordHasher = new Mock<IPasswordHasher>();
         passwordHasher.Setup(h => h.VerifyPassword(It.IsAny<string>(), It.IsAny<string>()))
             .Returns(true);
+        var clientValidator = new ClientValidator(
+            logger.Object,
+            clientReader.Object,
+            passwordHasher.Object);
+
+        var request = new ValidateClientRequest
+        {
+            ClientId = Guid.NewGuid(),
+            ClientSecret = "client_secret",
+            RedirectUri = new Uri("https://example.com/invalid")
+        };
+
+        // Act
+        var result = await clientValidator.ValidateAsync(request);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        result.Error.Should().Be(OAuthErrorTypes.InvalidRedirectUri);
+        result.ErrorDescription.Should().Be("Invalid redirect_uri parameter.");
+    }
+    
+    [Fact]
+    public async Task ValidateAsync_WhenRedirectUriAndClientSecretAreInvalid_ReturnsError()
+    {
+        // Arrange
+        var logger = new Mock<ILogger<ClientValidator>>();
+        var clientReader = new Mock<IClientReader>();
+        clientReader.Setup(r => r.GetByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(() => new Client()
+            {
+                ClientId = Guid.NewGuid(),
+                ClientSecretHash = "client_secret_hash",
+                ClientType = ClientType.ServerSide,
+                RedirectUris = new List<ClientRedirectUri>()
+                {
+                    new() { Uri = new Uri("https://example.com") }
+                }
+            });
+        var passwordHasher = new Mock<IPasswordHasher>();
+        passwordHasher.Setup(h => h.VerifyPassword(It.IsAny<string>(), It.IsAny<string>()))
+            .Returns(false);
         var clientValidator = new ClientValidator(
             logger.Object,
             clientReader.Object,
