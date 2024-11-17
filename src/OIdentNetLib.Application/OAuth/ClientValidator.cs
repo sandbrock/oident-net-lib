@@ -33,6 +33,28 @@ public class ClientValidator(
                 "Invalid client_id parameter.");
         }
         
+        // Validate the client's redirect_uris
+        if (client.RedirectUris is null || client.RedirectUris.Count == 0)
+        {
+            logger.LogWarning("Client {ClientId} has no redirect_uris.", client.ClientId);
+            return GenericHttpResponse<ValidateClientResponse>.CreateErrorResponse(
+                HttpStatusCode.BadRequest,
+                OIdentErrors.InvalidRedirectUri,
+                OAuthErrorTypes.InvalidRedirectUri,
+                "Invalid redirect_uri parameter.");
+        }
+        
+        // Validate the requested redirect_uri
+        var redirectUri = client.RedirectUris.FirstOrDefault(e => e.Uri == validateClientRequest.RedirectUri);
+        if (redirectUri == null)
+        {
+            return GenericHttpResponse<ValidateClientResponse>.CreateErrorResponse(
+                HttpStatusCode.BadRequest,
+                OIdentErrors.InvalidRedirectUri,
+                OAuthErrorTypes.InvalidRedirectUri,
+                "Invalid redirect_uri parameter.");
+        }
+        
         // Check if client_secret is required
         if (client.IsSecureClient && string.IsNullOrEmpty(validateClientRequest.ClientSecret))
         {
@@ -60,28 +82,6 @@ public class ClientValidator(
                     OAuthErrorTypes.UnauthorizedClient,
                     "Invalid client_secret parameter.");
             }
-        }
-        
-        // Validate the client's redirect_uris
-        if (client.RedirectUris is null || client.RedirectUris.Count == 0)
-        {
-            logger.LogWarning("Client {ClientId} has no redirect_uris.", client.ClientId);
-            return GenericHttpResponse<ValidateClientResponse>.CreateErrorResponse(
-                HttpStatusCode.BadRequest,
-                OIdentErrors.InvalidRedirectUri,
-                OAuthErrorTypes.InvalidRedirectUri,
-                "Invalid redirect_uri parameter.");
-        }
-        
-        // Validate the requested redirect_uri
-        var redirectUri = client.RedirectUris.FirstOrDefault(e => e.Uri == validateClientRequest.RedirectUri);
-        if (redirectUri == null)
-        {
-            return GenericHttpResponse<ValidateClientResponse>.CreateErrorResponse(
-                HttpStatusCode.BadRequest,
-                OIdentErrors.InvalidRedirectUri,
-                OAuthErrorTypes.InvalidRedirectUri,
-                "Invalid redirect_uri parameter.");
         }
         
         // Create the response object
