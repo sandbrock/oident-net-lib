@@ -29,9 +29,11 @@ public class ProcessAuthorizationRequest : IParsable<ProcessAuthorizationRequest
     public string? State { get; set; }
     
     [JsonPropertyName("code_challenge")]
+    [Required(ErrorMessage = "code_challenge is required.")]
     public string? CodeChallenge { get; set; }
     
     [JsonPropertyName("code_challenge_method")]
+    [Required(ErrorMessage = "code_challenge_method is required.")]
     public string? CodeChallengeMethod { get; set; }
 
     public static ProcessAuthorizationRequest Parse(string s, IFormatProvider? provider)

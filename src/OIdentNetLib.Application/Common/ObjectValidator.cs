@@ -13,7 +13,15 @@ namespace OIdentNetLib.Application.Common;
 /// </summary>
 public static class ObjectValidator
 {
-    public static ObjectValidatorResults Validate([NotNull] object? instance)
+    public enum ObjectValidatorResultType
+    {
+        MultiLine,
+        SingleLine
+    }
+    
+    public static ObjectValidatorResults Validate(
+        [NotNull] object? instance, 
+        ObjectValidatorResultType resultType = ObjectValidatorResultType.MultiLine)
     {
         ArgumentNullException.ThrowIfNull(instance);
 
@@ -29,7 +37,9 @@ public static class ObjectValidator
         return new ObjectValidatorResults(isValid, validationResults);
     }
     
-    public static GenericHttpResponse<object> ValidateObject([NotNull] object? instance)
+    public static GenericHttpResponse<object> ValidateObject(
+        [NotNull] object? instance,
+        ObjectValidatorResultType resultType = ObjectValidatorResultType.MultiLine)
     {
         // Get object validation results
         var objectValidationResults = Validate(instance);
@@ -38,12 +48,24 @@ public static class ObjectValidator
             return GenericHttpResponse<object>.CreateSuccessResponse(HttpStatusCode.OK);
         
         var errorMessage = new StringBuilder();
+        bool isFirstPass = true;
         foreach(var validationResult in objectValidationResults.ValidationResults)
         {
             if (string.IsNullOrEmpty(validationResult.ErrorMessage))
                 continue;
 
-            errorMessage.AppendLine(validationResult.ErrorMessage);
+            switch (resultType)
+            {
+                case ObjectValidatorResultType.MultiLine:
+                    errorMessage.AppendLine(validationResult.ErrorMessage);
+                    break;
+                case ObjectValidatorResultType.SingleLine:
+                    if (!isFirstPass)
+                        errorMessage.Append(", ");
+                    errorMessage.Append(validationResult.ErrorMessage);
+                    break;
+            }
+            isFirstPass = false;
         }
             
         return GenericHttpResponse<object>.CreateErrorResponse(
@@ -53,3 +75,4 @@ public static class ObjectValidator
             errorMessage.ToString());
     }
 }
+

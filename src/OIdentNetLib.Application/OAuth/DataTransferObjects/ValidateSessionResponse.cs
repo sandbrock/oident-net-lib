@@ -16,4 +16,5 @@ public class ValidateSessionResponse
     public string? PrincipalName { get; set; }
     public string? PrincipalEmail { get; set; }
     public string? AuthorizationCode { get; set; }
+    public string? State { get; set; }
 }

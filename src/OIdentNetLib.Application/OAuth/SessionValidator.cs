@@ -21,12 +21,12 @@ public class SessionValidator(
     {
         if (!string.IsNullOrEmpty(validateSessionRequest.RefreshToken))
         {
-            return await authorizationSessionValidator.ValidateAsync(validateSessionRequest);
+            return await tokenSessionValidator.ValidateAsync(validateSessionRequest);
         }
 
         if (!string.IsNullOrEmpty(validateSessionRequest.AuthorizationCode))
         {
-            return await tokenSessionValidator.ValidateAsync(validateSessionRequest);
+            return await authorizationSessionValidator.ValidateAsync(validateSessionRequest);
         }
 
         logger.LogInformation("Either refresh_token or authorization_code must be specified.");
