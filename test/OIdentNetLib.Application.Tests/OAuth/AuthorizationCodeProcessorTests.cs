@@ -8,6 +8,7 @@ using OIdentNetLib.Application.OAuth.DataTransferObjects;
 using OIdentNetLib.Application.OAuth.Models;
 using OIdentNetLib.Infrastructure.Database;
 using OIdentNetLib.Infrastructure.Database.Contracts;
+using OIdentNetLib.Infrastructure.Encryption.Models;
 using OIdentNetLib.Infrastructure.Errors;
 
 namespace OIdentNetLib.Application.Tests.OAuth;
@@ -247,8 +248,38 @@ public class AuthorizationCodeProcessorTests
                     }
                 }));
         var authorizationSessionValidator = new Mock<IAuthorizationSessionValidator>();
+        authorizationSessionValidator.Setup(v => v.ValidateAsync(It.IsAny<ValidateSessionRequest>()))
+            .ReturnsAsync(GenericHttpResponse<ValidateSessionResponse>.CreateSuccessResponseWithData(
+                HttpStatusCode.OK,
+                new ValidateSessionResponse()
+                {
+                    SessionId = Guid.NewGuid(),
+                    OAuthSessionType = OAuthSessionType.Authorization,
+                    PrincipalType = JwtPrincipalType.User,
+                    TenantId = Guid.NewGuid(),
+                    ClientId = Guid.NewGuid(),
+                    ClientRedirectUriId = clientRedirectUriId,
+                    UserId = Guid.NewGuid(),
+                    State = "state",
+                    Resource = "resource",
+                    Scope = "scope"
+                }));
         var authorizationSessionWriter = new Mock<IAuthorizationSessionWriter>();
         var tokenSessionCreator = new Mock<ITokenSessionCreator>();
+        tokenSessionCreator.Setup(v => v.CreateAsync(It.IsAny<CreateTokenSessionRequest>()))
+            .ReturnsAsync(
+                GenericHttpResponse<CreateTokenSessionResponse>.CreateSuccessResponseWithData(
+                    HttpStatusCode.OK,
+                    new CreateTokenSessionResponse()
+                    {
+                        AccessToken = "access-token",
+                        TokenType = "Bearer",
+                        ExpiresIn = 3600,
+                        RefreshToken = "refresh-token",
+                        Scope = "scope"
+                    }
+                )
+            );
         var requestMetadata = new RequestMetadata();
         var authorizationCodeProcessor = new AuthorizationCodeProcessor(
             clientValidator.Object, 
