@@ -30,22 +30,22 @@ public class AuthorizationSessionValidator(
                 "Authorization session not found for code {AuthorizationCode}.", 
                 validateSessionRequest.AuthorizationCode);
             return GenericHttpResponse<ValidateSessionResponse>.CreateErrorResponse(
-                HttpStatusCode.Unauthorized,
+                HttpStatusCode.BadRequest,
                 OIdentErrors.InvalidAuthorizationCode,
-                OAuthErrorTypes.AccessDenied,
+                OAuthErrorTypes.InvalidRequest,
                 "Invalid authorization code.");
         }
         
-        if (authSession.ExpiresAt < DateTime.UtcNow)
+        if (authSession.SessionExpiresAt < DateTime.UtcNow)
         {
             await authorizationSessionWriter.DeleteAsync(authSession.AuthorizationSessionId!.Value);
             logger.LogInformation(
                 "Authorization session {AuthorizationSessionId} has expired.",
                 authSession.AuthorizationSessionId);
             return GenericHttpResponse<ValidateSessionResponse>.CreateErrorResponse(
-                HttpStatusCode.Unauthorized,
+                HttpStatusCode.BadRequest,
                 OIdentErrors.ExpiredAuthorizationCode,
-                OAuthErrorTypes.AccessDenied,
+                OAuthErrorTypes.InvalidRequest,
                 "Authorization session has expired.");
         }
 
@@ -58,10 +58,16 @@ public class AuthorizationSessionValidator(
                     SessionId = authSession.AuthorizationSessionId,
                     OAuthSessionType = OAuthSessionType.Authorization,
                     PrincipalType = JwtPrincipalType.User,
-                    PrincipalId = authSession.UserId,
-                    PrincipalName = authSession.User.Username,
-                    PrincipalEmail = authSession.User.Email,
-                    TenantId = authSession.User.TenantId
+                    TenantId = authSession.User.TenantId,
+                    ClientId = authSession.ClientId,
+                    ClientRedirectUriId = authSession.ClientRedirectUriId,
+                    UserId = authSession.UserId,
+                    UserName = authSession.User.Username,
+                    Email = authSession.User.Email,
+                    AuthorizationCode = authSession.AuthorizationCode,
+                    State = authSession.State,
+                    Resource = authSession.Resource,
+                    Scope = authSession.Scope
                 }
             );
         }
@@ -71,9 +77,9 @@ public class AuthorizationSessionValidator(
             authSession.AuthorizationSessionId);
         await authorizationSessionWriter.DeleteAsync(authSession.AuthorizationSessionId!.Value);
         return GenericHttpResponse<ValidateSessionResponse>.CreateErrorResponse(
-            HttpStatusCode.Unauthorized, 
+            HttpStatusCode.BadRequest, 
             OIdentErrors.InvalidAuthorizationCode,
-            OAuthErrorTypes.AccessDenied,
+            OAuthErrorTypes.InvalidRequest,
             "Invalid authorization code.");
     }
 }

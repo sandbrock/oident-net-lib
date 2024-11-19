@@ -15,7 +15,8 @@ namespace OIdentNetLib.Application.OAuth;
 public class AuthorizationCodeProcessor(
     IClientValidator clientValidator,
     IAuthorizationSessionValidator authorizationSessionValidator,
-    IAuthorizationSessionWriter authorizationSessionWriter
+    IAuthorizationSessionWriter authorizationSessionWriter,
+    ITokenSessionCreator tokenSessionCreator
 ) : IAuthorizationCodeProcessor
 {
     public async Task<GenericHttpResponse<ProcessTokenResponse>> ProcessAsync(
@@ -27,7 +28,7 @@ public class AuthorizationCodeProcessor(
         if (!validateRequestResult.IsSuccess)
             return validateRequestResult;
         
-        // Validate the response type
+        // Validate the grant type
         if (processTokenRequest.GrantType != "authorization_code")
         {
             return GenericHttpResponse<ProcessTokenResponse>.CreateErrorResponse(
@@ -77,13 +78,41 @@ public class AuthorizationCodeProcessor(
                 validateSessionResponse.ErrorDescription);
         }
         
+        // Generate the token response
+        var createTokenSessionRequest = new CreateTokenSessionRequest()
+        {
+            SessionId = validateSessionResponse.Data!.SessionId,
+            ClientId = clientId,
+            UserId = validateSessionResponse.Data!.UserId,
+            Subject = validateSessionResponse.Data.UserId.ToString(),
+            PrincipalType = validateSessionResponse.Data.PrincipalType,
+            Audience = validateSessionResponse.Data.Resource,
+            Scope = validateSessionResponse.Data.Scope,
+        };
+        var createTokenSessionResponse = await tokenSessionCreator.CreateAsync(createTokenSessionRequest);
+        if (!createTokenSessionResponse.IsSuccess)
+        {
+            return GenericHttpResponse<ProcessTokenResponse>.CreateErrorResponse(
+                createTokenSessionResponse.StatusCode,
+                createTokenSessionResponse.OIdentError,
+                createTokenSessionResponse.Error,
+                createTokenSessionResponse.ErrorDescription);
+        }
+
         // Delete the authorization session
         await authorizationSessionWriter.DeleteAsync(validateSessionResponse.Data!.SessionId!.Value);
-        
-        // Generate the token
-        
-        await Task.CompletedTask;
-        throw new NotImplementedException();
+
+        var processTokenResponse = new ProcessTokenResponse()
+        {
+            AccessToken = createTokenSessionResponse.Data!.AccessToken,
+            TokenType = "Bearer",
+            ExpiresIn = createTokenSessionResponse.Data!.ExpiresIn,
+            RefreshToken = createTokenSessionResponse.Data!.RefreshToken,
+            Scope = createTokenSessionResponse.Data!.Scope
+        };
+        return GenericHttpResponse<ProcessTokenResponse>.CreateSuccessResponseWithData(
+            HttpStatusCode.OK,
+            processTokenResponse);
     }
     
     private GenericHttpResponse<ProcessTokenResponse> ValidateRequestObject(ProcessTokenRequest request)

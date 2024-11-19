@@ -27,5 +27,4 @@ public class ProcessTokenRequest
 
     [JsonPropertyName("code")]
     public string? Code { get; set; }
-
 }

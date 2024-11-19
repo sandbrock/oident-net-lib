@@ -12,9 +12,11 @@ public class ValidateSessionResponse
     public Guid? TenantId { get; set; }
     public Guid? ClientId { get; set; }
     public Guid? ClientRedirectUriId { get; set; }
-    public Guid? PrincipalId { get; set; }
-    public string? PrincipalName { get; set; }
-    public string? PrincipalEmail { get; set; }
+    public Guid? UserId { get; set; }
+    public string? UserName { get; set; }
+    public string? Email { get; set; }
     public string? AuthorizationCode { get; set; }
     public string? State { get; set; }
+    public string? Resource { get; set; }
+    public string? Scope { get; set; }
 }

@@ -25,6 +25,9 @@ public class ProcessAuthorizationRequest : IParsable<ProcessAuthorizationRequest
     [JsonPropertyName("scope")]
     public string? Scope { get; set; }
     
+    [JsonPropertyName("resource")]
+    public string? Resource { get; set; }
+    
     [JsonPropertyName("state")]
     public string? State { get; set; }
     
@@ -54,6 +57,7 @@ public class ProcessAuthorizationRequest : IParsable<ProcessAuthorizationRequest
             ResponseType = query["response_type"],
             ClientSecret = query["client_secret"],
             RedirectUri = redirectUri,
+            Resource = query["resource"],
             Scope = query["scope"],
             State = query["state"],
             CodeChallenge = query["code_challenge"],

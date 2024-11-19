@@ -71,8 +71,8 @@ public class TokenSessionValidator(
             {
                 SessionId = validateJwtResponse.SessionId,
                 OAuthSessionType = OAuthSessionType.Token,
-                PrincipalId = validateJwtResponse.PrincipalId,
-                PrincipalName = client.Name,
+                UserId = validateJwtResponse.PrincipalId,
+                UserName = client.Name,
                 TenantId = client.TenantId
             }
         );
@@ -97,9 +97,9 @@ public class TokenSessionValidator(
             {
                 SessionId = validateJwtResponse.SessionId,
                 OAuthSessionType = OAuthSessionType.Token,
-                PrincipalId = validateJwtResponse.PrincipalId,
-                PrincipalName = user.Username,
-                PrincipalEmail = user.Email,
+                UserId = validateJwtResponse.PrincipalId,
+                UserName = user.Username,
+                Email = user.Email,
                 TenantId = user.TenantId
             }
         );

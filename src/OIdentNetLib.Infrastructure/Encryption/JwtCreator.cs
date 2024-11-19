@@ -15,11 +15,9 @@ public class JwtCreator : IJwtCreator
         
         ArgumentException.ThrowIfNullOrEmpty(request.Jti);
         ArgumentException.ThrowIfNullOrEmpty(request.Sub);
-        ArgumentException.ThrowIfNullOrEmpty(request.Azp);
         
         ArgumentException.ThrowIfNullOrEmpty(request.SessionId);
         ArgumentException.ThrowIfNullOrEmpty(request.Audience);
-        ArgumentException.ThrowIfNullOrEmpty(request.Scope);
         
         ArgumentNullException.ThrowIfNull(request.IssuedAt);
         ArgumentNullException.ThrowIfNull(request.NotBefore);
@@ -39,18 +37,22 @@ public class JwtCreator : IJwtCreator
         
         var rsa = RSA.Create(rsaParameters);
         
-        var key = new RsaSecurityKey(rsa);
-        key.KeyId = request.Jwk.KeyId;
+        var key = new RsaSecurityKey(rsa)
+        {
+            KeyId = request.Jwk.KeyId
+        };
         var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.RsaSha256);
         
         var claims = new Dictionary<string, object>()
         {
             { JwtRegisteredClaimNames.Jti, request.Jti },
             { JwtRegisteredClaimNames.Sub, request.Sub },
-            { JwtRegisteredClaimNames.Azp, request.Azp },
         };
         
         AddNonEmptyClaim(claims, "session_id", request.SessionId);
+        AddNonEmptyClaim(claims, "sub_type", request.PrincipalType.ToString());
+        AddNonEmptyClaim(claims, "orig_audience", request.OriginalAudience);
+        AddNonEmptyClaim(claims, "orig_scope", request.OriginalScope);
 
         var descriptor = new SecurityTokenDescriptor
         {

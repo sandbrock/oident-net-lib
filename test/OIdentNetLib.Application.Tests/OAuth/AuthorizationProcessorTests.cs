@@ -15,6 +15,7 @@ using OIdentNetLib.Infrastructure.Errors;
 
 namespace OIdentNetLib.Application.Tests.OAuth;
 
+[Trait("Category", "Unit")]
 public class AuthorizationProcessorTests
 {
     [Fact]

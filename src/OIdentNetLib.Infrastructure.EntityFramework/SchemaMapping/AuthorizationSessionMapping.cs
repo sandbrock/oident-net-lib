@@ -17,6 +17,7 @@ public class AuthorizationSessionMapping
             entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
             entity.Property(e => e.AuthorizationSessionId).HasColumnName("authorization_session_id");
             entity.Property(e => e.ResponseType).HasColumnName("response_type").HasMaxLength(25);
+            entity.Property(e => e.Resource).HasColumnName("resource").HasMaxLength(512);
             entity.Property(e => e.State).HasColumnName("state").HasMaxLength(1024);
             entity.Property(e => e.Scope)
                 .HasColumnName("scope")
@@ -31,7 +32,8 @@ public class AuthorizationSessionMapping
             entity.Property(e => e.AuthorizationCode)
                 .HasColumnName("authorization_code")
                 .HasMaxLength(100);
-            entity.Property(e => e.ExpiresAt).HasColumnName("expires_at");
+            entity.Property(e => e.SessionCreatedAt).HasColumnName("session_created_at");
+            entity.Property(e => e.SessionExpiresAt).HasColumnName("session_expires_at");
             entity.Property(e => e.ClientId).HasColumnName("client_id");
             entity.Property(e => e.UserId).HasColumnName("user_id");
             entity.Property(e => e.ClientRedirectUriId).HasColumnName("client_redirect_uri_id");

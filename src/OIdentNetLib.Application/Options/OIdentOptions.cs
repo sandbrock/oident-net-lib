@@ -7,15 +7,21 @@ namespace OIdentNetLib.Application.Options;
 /// </summary>
 public class OIdentOptions
 {
+    [JsonPropertyName("JwtIssuer")]
+    public string? JwtIssuer { get; set; }
+
     [JsonPropertyName("LoginUri")]
     public Uri? LoginUri { get; set; }
     
-    [JsonPropertyName("AuthorizationSessionExpirationInMinutes")]
-    public int AuthorizationSessionExpirationInMinutes { get; set; }
+    [JsonPropertyName("AuthorizationSessionExpirationInSeconds")]
+    public int AuthorizationSessionExpirationInSeconds { get; set; }
     
-    [JsonPropertyName("TokenSessionExpirationInMinutes")]
-    public int TokenSessionExpirationInMinutes { get; set; }
+    [JsonPropertyName("TokenSessionExpirationInSeconds")]
+    public int TokenSessionExpirationInSeconds { get; set; }
     
-    [JsonPropertyName("JwtIssuer")]
-    public string? JwtIssuer { get; set; }
+    [JsonPropertyName("AccessTokenExpirationInSeconds")]
+    public int AccessTokenExpirationInSeconds { get; set; }
+
+    [JsonPropertyName("RefreshTokenExpirationInSeconds")]
+    public int RefreshTokenExpirationInSeconds { get; set; }
 }

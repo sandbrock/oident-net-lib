@@ -2,7 +2,7 @@
 
 namespace OIdentNetLib.Application.OAuth.DataTransferObjects;
 
-public class ProcessTokenResponse
+public class CreateTokenSessionResponse
 {
     [JsonPropertyName("access_token")]
     public string? AccessToken { get; set; }

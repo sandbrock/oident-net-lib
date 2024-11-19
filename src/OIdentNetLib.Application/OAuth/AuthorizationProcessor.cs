@@ -81,16 +81,8 @@ public class AuthorizationProcessor(
         string redirectUrl;
         if (!validateSessionResponse.IsSuccess)
         {
-            redirectUrl = 
-                $"{oidentOptions.Value.LoginUri}?" +
-                $"response_type={processAuthorizationRequest.ResponseType}&" +
-                $"client_id={processAuthorizationRequest.ClientId}&" +
-                $"redirect_uri={processAuthorizationRequest.RedirectUri}&" +
-                $"state={processAuthorizationRequest.State}&" +
-                $"scope={processAuthorizationRequest.Scope}&" +
-                $"code_challenge={processAuthorizationRequest.CodeChallenge}&" +
-                $"code_challenge_method={processAuthorizationRequest.CodeChallengeMethod}";
-
+            var authorizationSession = await CreateAuthorizationSessionAsync(processAuthorizationRequest, validateClientResponse);
+            redirectUrl = $"{oidentOptions.Value.LoginUri}?session_id={authorizationSession.AuthorizationSessionId}";
             return GenericHttpResponse<ProcessAuthorizationResponse>.CreateRedirectResponse(
                 new Uri(redirectUrl),
                 OIdentErrors.ValidSessionFound,
@@ -112,7 +104,30 @@ public class AuthorizationProcessor(
             null,
             null);
     }
-    
+
+    private async Task<AuthorizationSession> CreateAuthorizationSessionAsync(
+        ProcessAuthorizationRequest processAuthorizationRequest,
+        GenericHttpResponse<ValidateClientResponse> validateClientResponse)
+    {
+        var createdAt = DateTime.UtcNow;
+        var authorizationSession = new AuthorizationSession()
+        {
+            AuthorizationSessionId = new Guid(),
+            ResponseType = processAuthorizationRequest.ResponseType,
+            State = processAuthorizationRequest.State,
+            Resource = processAuthorizationRequest.Resource,
+            Scope = processAuthorizationRequest.Scope,
+            CodeChallenge = processAuthorizationRequest.CodeChallenge,
+            CodeChallengeMethod = processAuthorizationRequest.CodeChallengeMethod,
+            ClientId = processAuthorizationRequest.ClientId,
+            ClientRedirectUriId = validateClientResponse.Data?.ClientRedirectUri?.ClientRedirectUriId,
+            SessionCreatedAt = createdAt,
+            SessionExpiresAt = createdAt.AddSeconds(oidentOptions.Value.AuthorizationSessionExpirationInSeconds)
+        };
+        await authorizationSessionWriter.WriteAsync(authorizationSession);
+        return authorizationSession;
+    }
+
     private GenericHttpResponse<ProcessAuthorizationResponse> ValidateRequestObject(ProcessAuthorizationRequest request)
     {
         // Get object validation results

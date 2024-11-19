@@ -54,7 +54,7 @@ public class TokenSessionProcessor(
             {
                 TokenSessionId = processTokenSessionRequest.SessionId,
                 SessionCreatedAt = now,
-                SessionExpiresAt = now.AddMinutes(oidentOptions.Value.TokenSessionExpirationInMinutes),
+                SessionExpiresAt = now.AddMinutes(oidentOptions.Value.TokenSessionExpirationInSeconds),
                 ClientId = processTokenSessionRequest.ClientId,
                 UserId = processTokenSessionRequest.UserId                
             };
@@ -67,7 +67,6 @@ public class TokenSessionProcessor(
             Issuer = oidentOptions.Value.JwtIssuer,
             Jti = Guid.NewGuid().ToString(),
             Sub = tokenSession.UserId.ToString(),
-            Azp = tokenSession.UserId.ToString(),
             SessionId = processTokenSessionRequest.SessionId.ToString(),
         };
         
