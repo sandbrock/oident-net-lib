@@ -5,6 +5,8 @@ namespace OIdentNetLib.Infrastructure.IO;
 
 public class JsonSerializer : IJsonSerializer
 {
+    private static readonly JsonSerializerOptions Options = new() { WriteIndented = true };
+    
     public async Task<string> SerializeAsync(object? value)
     {
         if (value is null)
@@ -12,9 +14,8 @@ public class JsonSerializer : IJsonSerializer
             return string.Empty;
         }
         
-        var options = new JsonSerializerOptions() { WriteIndented = true };
         using var streamWriter = new MemoryStream();
-        await System.Text.Json.JsonSerializer.SerializeAsync(streamWriter, value, options);
+        await System.Text.Json.JsonSerializer.SerializeAsync(streamWriter, value, Options);
 
         streamWriter.Position = 0;
         using var streamReader = new StreamReader(streamWriter);
