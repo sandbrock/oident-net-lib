@@ -1,5 +1,4 @@
 using System.Net;
-using Microsoft.Extensions.Logging;
 using OIdentNetLib.Application.Common;
 using OIdentNetLib.Application.OAuth.Contracts;
 using OIdentNetLib.Application.OAuth.DataTransferObjects;

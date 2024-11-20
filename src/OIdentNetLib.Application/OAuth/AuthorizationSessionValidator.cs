@@ -23,7 +23,8 @@ public class AuthorizationSessionValidator(
 {
     public async Task<GenericHttpResponse<ValidateSessionResponse>> ValidateAsync(ValidateSessionRequest validateSessionRequest)
     {
-        var authSession = await authorizationSessionReader.ReadByAuthCodeAsync(validateSessionRequest.AuthorizationCode!);
+        var authSession = await authorizationSessionReader.ReadByAuthCodeAsync(
+            validateSessionRequest.AuthorizationCode!);
         if (authSession is null)
         {
             logger.LogInformation(

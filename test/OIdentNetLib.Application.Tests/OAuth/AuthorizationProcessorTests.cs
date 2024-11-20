@@ -36,7 +36,6 @@ public class AuthorizationProcessorTests
         var authorizationProcessor = new AuthorizationProcessor(
             options.Object,
             clientValidator.Object,
-            authorizationCodeCreator.Object,
             authorizationSessionValidator.Object,
             authorizationSessionWriter.Object);
         var processAuthorizationRequest = new ProcessAuthorizationRequest
@@ -81,7 +80,6 @@ public class AuthorizationProcessorTests
         var authorizationProcessor = new AuthorizationProcessor(
             options.Object,
             clientValidator.Object,
-            authorizationCodeCreator.Object,
             authorizationSessionValidator.Object,
             authorizationSessionWriter.Object);
         var processAuthorizationRequest = new ProcessAuthorizationRequest
@@ -122,7 +120,6 @@ public class AuthorizationProcessorTests
         var authorizationProcessor = new AuthorizationProcessor(
             options.Object,
             clientValidator.Object,
-            authorizationCodeCreator.Object,
             authorizationSessionValidator.Object,
             authorizationSessionWriter.Object);
         var processAuthorizationRequest = new ProcessAuthorizationRequest
@@ -167,7 +164,6 @@ public class AuthorizationProcessorTests
         var authorizationProcessor = new AuthorizationProcessor(
             options.Object,
             clientValidator.Object,
-            authorizationCodeCreator.Object,
             authorizationSessionValidator.Object,
             authorizationSessionWriter.Object);
         var processAuthorizationRequest = new ProcessAuthorizationRequest
@@ -220,7 +216,6 @@ public class AuthorizationProcessorTests
         var authorizationProcessor = new AuthorizationProcessor(
             options.Object,
             clientValidator.Object,
-            authorizationCodeCreator.Object,
             authorizationSessionValidator.Object,
             authorizationSessionWriter.Object);
         var processAuthorizationRequest = new ProcessAuthorizationRequest
@@ -286,7 +281,6 @@ public class AuthorizationProcessorTests
         var authorizationProcessor = new AuthorizationProcessor(
             options.Object,
             clientValidator.Object,
-            authorizationCodeCreator.Object,
             authorizationSessionValidator.Object,
             authorizationSessionWriter.Object);
         var processAuthorizationRequest = new ProcessAuthorizationRequest
@@ -354,7 +348,6 @@ public class AuthorizationProcessorTests
         var authorizationProcessor = new AuthorizationProcessor(
             options.Object,
             clientValidator.Object,
-            authorizationCodeCreator.Object,
             authorizationSessionValidator.Object,
             authorizationSessionWriter.Object);
         var processAuthorizationRequest = new ProcessAuthorizationRequest

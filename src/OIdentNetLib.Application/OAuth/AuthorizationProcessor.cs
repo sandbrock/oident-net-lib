@@ -7,7 +7,6 @@ using OIdentNetLib.Application.OAuth.Models;
 using OIdentNetLib.Application.Options;
 using OIdentNetLib.Infrastructure.Database;
 using OIdentNetLib.Infrastructure.Database.Contracts;
-using OIdentNetLib.Infrastructure.Encryption.Contracts;
 using OIdentNetLib.Infrastructure.Errors;
 
 namespace OIdentNetLib.Application.OAuth;
@@ -18,7 +17,6 @@ namespace OIdentNetLib.Application.OAuth;
 public class AuthorizationProcessor(
     IOptions<OIdentOptions> oidentOptions,
     IClientValidator clientValidator,
-    IAuthorizationCodeCreator authorizationCodeCreator,
     IAuthorizationSessionValidator authorizationSessionValidator,
     IAuthorizationSessionWriter authorizationSessionWriter
 ) : IAuthorizationProcessor
