@@ -4,6 +4,7 @@ using OIdentNetLib.Application.Common;
 using OIdentNetLib.Application.OAuth.Contracts;
 using OIdentNetLib.Application.OAuth.DataTransferObjects;
 using OIdentNetLib.Application.OAuth.Models;
+using OIdentNetLib.Infrastructure.Database;
 using OIdentNetLib.Infrastructure.Database.Contracts;
 using OIdentNetLib.Infrastructure.Encryption.Contracts;
 using OIdentNetLib.Infrastructure.Errors;
@@ -32,16 +33,6 @@ public class ClientValidator(
                 "Invalid client_id");
         }
         
-        // Parse the redirect_uri
-        if (!Uri.TryCreate(validateClientRequest.RedirectUri, UriKind.Absolute, out var redirectUri))
-        {
-            return GenericHttpResponse<ValidateClientResponse>.CreateErrorResponse(
-                HttpStatusCode.BadRequest,
-                OIdentErrors.InvalidRedirectUri,
-                OAuthErrorTypes.InvalidRequest,
-                "Invalid redirect_uri");
-        }
-        
         // Validate the value of client_id
         var client = await clientReader.GetByIdAsync(clientId);
         if (client is null)
@@ -54,28 +45,43 @@ public class ClientValidator(
                 "Invalid client_id parameter.");
         }
         
-        // Validate the client's redirect_uris
-        if (client.RedirectUris is null || client.RedirectUris.Count == 0)
+        // Parse the redirect_uri
+        Uri? redirectUri = null;
+        ClientRedirectUri? redirectUriInstance = null;
+        if (validateClientRequest.IsRedirectUriRequired)
         {
-            logger.LogWarning("Client {ClientId} has no redirect_uris.", client.ClientId);
-            return GenericHttpResponse<ValidateClientResponse>.CreateErrorResponse(
-                HttpStatusCode.BadRequest,
-                OIdentErrors.InvalidRedirectUri,
-                OAuthErrorTypes.InvalidRedirectUri,
-                "Invalid redirect_uri parameter.");
+            if (!Uri.TryCreate(validateClientRequest.RedirectUri, UriKind.Absolute, out redirectUri))
+            {
+                return GenericHttpResponse<ValidateClientResponse>.CreateErrorResponse(
+                    HttpStatusCode.BadRequest,
+                    OIdentErrors.InvalidRedirectUri,
+                    OAuthErrorTypes.InvalidRequest,
+                    "Invalid redirect_uri");
+            }
+
+            // Validate the client's redirect_uris
+            if (client.RedirectUris is null || client.RedirectUris.Count == 0)
+            {
+                logger.LogWarning("Client {ClientId} has no redirect_uris.", client.ClientId);
+                return GenericHttpResponse<ValidateClientResponse>.CreateErrorResponse(
+                    HttpStatusCode.BadRequest,
+                    OIdentErrors.InvalidRedirectUri,
+                    OAuthErrorTypes.InvalidRedirectUri,
+                    "Invalid redirect_uri parameter.");
+            }
+
+            // Validate the requested redirect_uri
+            redirectUriInstance = client.RedirectUris.FirstOrDefault(e => e.Uri == redirectUri);
+            if (redirectUriInstance == null)
+            {
+                return GenericHttpResponse<ValidateClientResponse>.CreateErrorResponse(
+                    HttpStatusCode.BadRequest,
+                    OIdentErrors.InvalidRedirectUri,
+                    OAuthErrorTypes.InvalidRedirectUri,
+                    "Invalid redirect_uri parameter.");
+            }
         }
-        
-        // Validate the requested redirect_uri
-        var redirectUriInstance = client.RedirectUris.FirstOrDefault(e => e.Uri == redirectUri);
-        if (redirectUriInstance == null)
-        {
-            return GenericHttpResponse<ValidateClientResponse>.CreateErrorResponse(
-                HttpStatusCode.BadRequest,
-                OIdentErrors.InvalidRedirectUri,
-                OAuthErrorTypes.InvalidRedirectUri,
-                "Invalid redirect_uri parameter.");
-        }
-        
+
         // Check if client_secret is required
         if (client.IsSecureClient && string.IsNullOrEmpty(validateClientRequest.ClientSecret))
         {
@@ -110,8 +116,7 @@ public class ClientValidator(
         {
             ClientId = client.ClientId,
             ClientName = client.Name!,
-            ClientRedirectUri = client.RedirectUris.FirstOrDefault(
-                e => e.Uri == redirectUri),
+            ClientRedirectUri = redirectUriInstance,
         };
         
         // Return the response

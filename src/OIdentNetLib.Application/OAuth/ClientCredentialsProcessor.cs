@@ -18,13 +18,12 @@ public class ClientCredentialsProcessor(
 {
     public async Task<GenericHttpResponse<ProcessTokenResponse>> ProcessAsync(
         RequestMetadata requestMetadata,
-        ProcessTokenRequest request)
+        ProcessTokenRequest processTokenRequest)
     {
         // Validate the request object
         var validateRequestResult = ObjectValidator.ValidateObject(
-            request,
+            processTokenRequest,
             ObjectValidator.ObjectValidatorResultType.SingleLine);
-        
         if (!validateRequestResult.IsSuccess)
         {
             logger.LogWarning("Invalid client_credentials request object: {ErrorDescription}", 
@@ -36,11 +35,22 @@ public class ClientCredentialsProcessor(
                 validateRequestResult.ErrorDescription);
         }
         
+        // Validate the grant_type
+        if (processTokenRequest.GrantType != "client_credentials")
+        {
+            return GenericHttpResponse<ProcessTokenResponse>.CreateErrorResponse(
+                HttpStatusCode.BadRequest,
+                OIdentErrors.InvalidGrantType,
+                OAuthErrorTypes.InvalidRequest,
+                "Invalid grant_type");
+        }
+        
         // Validate the client
         var validateClientRequest = new ValidateClientRequest()
         {
-            ClientId = request.ClientId,
-            ClientSecret = request.ClientSecret
+            ClientId = processTokenRequest.ClientId,
+            ClientSecret = processTokenRequest.ClientSecret,
+            IsRedirectUriRequired = false
         };
         var clientValidationResult = await clientValidator.ValidateAsync(
             validateClientRequest);
@@ -49,13 +59,11 @@ public class ClientCredentialsProcessor(
             logger.LogWarning("Invalid client_credentials request object: {ErrorDescription}",
                 clientValidationResult.ErrorDescription);
             return GenericHttpResponse<ProcessTokenResponse>.CreateErrorResponse(
-                HttpStatusCode.Unauthorized,
+                clientValidationResult.StatusCode,
                 clientValidationResult.OIdentError,
                 clientValidationResult.Error,
                 clientValidationResult.ErrorDescription);
         }
-        
-        
 
         await Task.CompletedTask;
         throw new NotImplementedException();

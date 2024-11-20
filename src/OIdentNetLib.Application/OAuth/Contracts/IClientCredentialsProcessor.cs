@@ -7,5 +7,5 @@ public interface IClientCredentialsProcessor
 {
     Task<GenericHttpResponse<ProcessTokenResponse>> ProcessAsync(
         RequestMetadata requestMetadata,
-        ProcessTokenRequest request);
+        ProcessTokenRequest processTokenRequest);
 }
