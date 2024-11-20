@@ -50,18 +50,13 @@ public static class OAuthEndpoints
         {
             var form = await httpRequest.ReadFormAsync();
             
-            if (!Uri.TryCreate(form["redirect_uri"], UriKind.Absolute, out var redirectUri))
-            {
-                return Results.BadRequest(OAuthErrorTypes.InvalidRequest);
-            }
-            
             processTokenRequest = new ProcessTokenRequest()
             {
                 ClientId = form["client_id"],
                 ClientSecret = form["client_secret"],
                 GrantType = form["grant_type"],
                 Code = form["code"],
-                RedirectUri = redirectUri
+                RedirectUri = form["redirect_uri"],
             };
         }
         
