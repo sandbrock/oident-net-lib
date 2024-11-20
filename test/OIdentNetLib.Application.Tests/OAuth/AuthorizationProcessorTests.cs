@@ -30,7 +30,6 @@ public class AuthorizationProcessorTests
                 OIdentErrors.InvalidClientId,
                 OAuthErrorTypes.InvalidRequest,
                 "Invalid client_id parameter."));
-        var authorizationCodeCreator = new Mock<IAuthorizationCodeCreator>();
         var authorizationSessionValidator = new Mock<IAuthorizationSessionValidator>();
         var authorizationSessionWriter = new Mock<IAuthorizationSessionWriter>();
         var authorizationProcessor = new AuthorizationProcessor(
@@ -41,9 +40,9 @@ public class AuthorizationProcessorTests
         var processAuthorizationRequest = new ProcessAuthorizationRequest
         {
             ResponseType = "code",
-            ClientId = Guid.NewGuid(),
+            ClientId = Guid.NewGuid().ToString(),
             ClientSecret = "secret",
-            RedirectUri = new Uri("https://example.com/callback"),
+            RedirectUri = "https://example.com/callback",
             Scope = "read write",
             State = "state",
             CodeChallenge = "code_challenge",
@@ -74,7 +73,6 @@ public class AuthorizationProcessorTests
                 OIdentErrors.InvalidRedirectUri,
                 OAuthErrorTypes.InvalidRequest,
                 "Invalid redirect_uri parameter."));
-        var authorizationCodeCreator = new Mock<IAuthorizationCodeCreator>();
         var authorizationSessionValidator = new Mock<IAuthorizationSessionValidator>();
         var authorizationSessionWriter = new Mock<IAuthorizationSessionWriter>();
         var authorizationProcessor = new AuthorizationProcessor(
@@ -85,9 +83,9 @@ public class AuthorizationProcessorTests
         var processAuthorizationRequest = new ProcessAuthorizationRequest
         {
             ResponseType = "code",
-            ClientId = Guid.NewGuid(),
+            ClientId = Guid.NewGuid().ToString(),
             ClientSecret = "secret",
-            RedirectUri = new Uri("https://example.com/callback"),
+            RedirectUri = "https://example.com/callback",
             Scope = "read write",
             State = "state",
             CodeChallenge = "code_challenge",
@@ -114,7 +112,6 @@ public class AuthorizationProcessorTests
         var clientValidator = new Mock<IClientValidator>();
         clientValidator.Setup(x => x.ValidateAsync(It.IsAny<ValidateClientRequest>()))
             .ReturnsAsync(GenericHttpResponse<ValidateClientResponse>.CreateSuccessResponse(HttpStatusCode.OK));
-        var authorizationCodeCreator = new Mock<IAuthorizationCodeCreator>();
         var authorizationSessionValidator = new Mock<IAuthorizationSessionValidator>();
         var authorizationSessionWriter = new Mock<IAuthorizationSessionWriter>();
         var authorizationProcessor = new AuthorizationProcessor(
@@ -125,9 +122,9 @@ public class AuthorizationProcessorTests
         var processAuthorizationRequest = new ProcessAuthorizationRequest
         {
             ResponseType = "token",
-            ClientId = Guid.NewGuid(),
+            ClientId = Guid.NewGuid().ToString(),
             ClientSecret = "secret",
-            RedirectUri = new Uri("https://example.com/callback"),
+            RedirectUri = "https://example.com/callback",
             Scope = "read write",
             State = "state",
             CodeChallenge = "code_challenge",
@@ -158,7 +155,6 @@ public class AuthorizationProcessorTests
                 OIdentErrors.InvalidClientSecret,
                 OAuthErrorTypes.UnauthorizedClient,
                 "Invalid client credentials."));
-        var authorizationCodeCreator = new Mock<IAuthorizationCodeCreator>();
         var authorizationSessionValidator = new Mock<IAuthorizationSessionValidator>();
         var authorizationSessionWriter = new Mock<IAuthorizationSessionWriter>();
         var authorizationProcessor = new AuthorizationProcessor(
@@ -169,9 +165,9 @@ public class AuthorizationProcessorTests
         var processAuthorizationRequest = new ProcessAuthorizationRequest
         {
             ResponseType = "code",
-            ClientId = Guid.NewGuid(),
+            ClientId = Guid.NewGuid().ToString(),
             ClientSecret = "secret",
-            RedirectUri = new Uri("https://example.com/callback"),
+            RedirectUri = "https://example.com/callback",
             Scope = "read write",
             State = "state",
             CodeChallenge = "code_challenge",
@@ -221,9 +217,9 @@ public class AuthorizationProcessorTests
         var processAuthorizationRequest = new ProcessAuthorizationRequest
         {
             ResponseType = "code",
-            ClientId = Guid.NewGuid(),
+            ClientId = Guid.NewGuid().ToString(),
             ClientSecret = "secret",
-            RedirectUri = new Uri("https://example.com/callback"),
+            RedirectUri = "https://example.com/callback",
             Scope = "read write",
             State = "state"
         };
@@ -286,9 +282,9 @@ public class AuthorizationProcessorTests
         var processAuthorizationRequest = new ProcessAuthorizationRequest
         {
             ResponseType = "code",
-            ClientId = Guid.NewGuid(),
+            ClientId = Guid.NewGuid().ToString(),
             ClientSecret = "secret",
-            RedirectUri = new Uri("https://example.com/callback"),
+            RedirectUri = "https://example.com/callback",
             Scope = "read write",
             State = "state",
             CodeChallenge = "code_challenge",
@@ -353,9 +349,9 @@ public class AuthorizationProcessorTests
         var processAuthorizationRequest = new ProcessAuthorizationRequest
         {
             ResponseType = "code",
-            ClientId = Guid.NewGuid(),
+            ClientId = Guid.NewGuid().ToString(),
             ClientSecret = "secret",
-            RedirectUri = new Uri("https://example.com/callback"),
+            RedirectUri = "https://example.com/callback",
             Scope = "read write",
             State = "state",
             CodeChallenge = "code_challenge",

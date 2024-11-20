@@ -19,10 +19,31 @@ public class ClientValidator(
     IPasswordHasher passwordHasher
 ) : IClientValidator
 {
-    public async Task<GenericHttpResponse<ValidateClientResponse>> ValidateAsync(ValidateClientRequest validateClientRequest)
+    public async Task<GenericHttpResponse<ValidateClientResponse>> ValidateAsync(
+        ValidateClientRequest validateClientRequest)
     {
+        // Parse the client_id
+        if (!Guid.TryParse(validateClientRequest.ClientId, out var clientId))
+        {
+            return GenericHttpResponse<ValidateClientResponse>.CreateErrorResponse(
+                HttpStatusCode.BadRequest,
+                OIdentErrors.InvalidClientId,
+                OAuthErrorTypes.InvalidRequest,
+                "Invalid client_id");
+        }
+        
+        // Parse the redirect_uri
+        if (!Uri.TryCreate(validateClientRequest.RedirectUri, UriKind.Absolute, out var redirectUri))
+        {
+            return GenericHttpResponse<ValidateClientResponse>.CreateErrorResponse(
+                HttpStatusCode.BadRequest,
+                OIdentErrors.InvalidRedirectUri,
+                OAuthErrorTypes.InvalidRequest,
+                "Invalid redirect_uri");
+        }
+        
         // Validate the value of client_id
-        var client = await clientReader.GetByIdAsync(validateClientRequest.ClientId!.Value);
+        var client = await clientReader.GetByIdAsync(clientId);
         if (client is null)
         {
             logger.LogInformation("Unable to locate client {ClientId}.", validateClientRequest.ClientId);
@@ -45,8 +66,8 @@ public class ClientValidator(
         }
         
         // Validate the requested redirect_uri
-        var redirectUri = client.RedirectUris.FirstOrDefault(e => e.Uri == validateClientRequest.RedirectUri);
-        if (redirectUri == null)
+        var redirectUriInstance = client.RedirectUris.FirstOrDefault(e => e.Uri == redirectUri);
+        if (redirectUriInstance == null)
         {
             return GenericHttpResponse<ValidateClientResponse>.CreateErrorResponse(
                 HttpStatusCode.BadRequest,
@@ -90,7 +111,7 @@ public class ClientValidator(
             ClientId = client.ClientId,
             ClientName = client.Name!,
             ClientRedirectUri = client.RedirectUris.FirstOrDefault(
-                e => e.Uri == validateClientRequest.RedirectUri),
+                e => e.Uri == redirectUri),
         };
         
         // Return the response

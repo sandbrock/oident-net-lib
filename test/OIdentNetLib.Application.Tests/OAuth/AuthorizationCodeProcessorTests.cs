@@ -61,7 +61,7 @@ public class AuthorizationCodeProcessorTests
             ClientId = "client-id",
             ClientSecret = "client-secret",
             Code = "code",
-            RedirectUri = new Uri("https://example.com/callback"),
+            RedirectUri = "https://example.com/callback",
         };
         
         // Act
@@ -79,6 +79,12 @@ public class AuthorizationCodeProcessorTests
     {
         // Arrange
         var clientValidator = new Mock<IClientValidator>();
+        clientValidator.Setup(v => v.ValidateAsync(It.IsAny<ValidateClientRequest>()))
+            .ReturnsAsync(GenericHttpResponse<ValidateClientResponse>.CreateErrorResponse(
+                HttpStatusCode.BadRequest,
+                OIdentErrors.InvalidClientId,
+                OAuthErrorTypes.InvalidRequest,
+                null));
         var authorizationSessionValidator = new Mock<IAuthorizationSessionValidator>();
         var authorizationSessionWriter = new Mock<IAuthorizationSessionWriter>();
         var tokenSessionCreator = new Mock<ITokenSessionCreator>();
@@ -94,7 +100,7 @@ public class AuthorizationCodeProcessorTests
             ClientId = "client-id",
             ClientSecret = "client-secret",
             Code = "code",
-            RedirectUri = new Uri("https://example.com/callback"),
+            RedirectUri = "https://example.com/callback",
         };
         
         // Act
@@ -134,7 +140,7 @@ public class AuthorizationCodeProcessorTests
             ClientId = clientId.ToString(),
             ClientSecret = "client-secret",
             Code = "code",
-            RedirectUri = new Uri("https://example.com/callback"),
+            RedirectUri = "https://example.com/callback",
         };
         
         // Act
@@ -174,7 +180,7 @@ public class AuthorizationCodeProcessorTests
             ClientId = clientId.ToString(),
             ClientSecret = "client-secret",
             Code = "code",
-            RedirectUri = new Uri("https://example.com/callback"),
+            RedirectUri = "https://example.com/callback",
         };
         
         // Act
@@ -214,7 +220,7 @@ public class AuthorizationCodeProcessorTests
             ClientId = clientId.ToString(),
             ClientSecret = "client-secret",
             Code = "code",
-            RedirectUri = new Uri("https://example.com/invalid"),
+            RedirectUri = "https://example.com/invalid",
         };
         
         // Act
@@ -292,7 +298,7 @@ public class AuthorizationCodeProcessorTests
             ClientId = clientId.ToString(),
             ClientSecret = "client-secret",
             Code = "code",
-            RedirectUri = new Uri("https://example.com/invalid"),
+            RedirectUri = "https://example.com/invalid",
         };
         
         // Act

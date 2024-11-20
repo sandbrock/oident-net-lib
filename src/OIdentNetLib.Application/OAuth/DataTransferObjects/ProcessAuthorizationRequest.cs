@@ -13,14 +13,14 @@ public class ProcessAuthorizationRequest : IParsable<ProcessAuthorizationRequest
 
     [JsonPropertyName("client_id")]
     [Required(ErrorMessage = "client_id is required.")]
-    public Guid? ClientId { get; set; }
+    public string? ClientId { get; set; }
     
     [JsonPropertyName("client_secret")]
     public string? ClientSecret { get; set; }
     
     [JsonPropertyName("redirect_uri")]
     [Required(ErrorMessage = "redirect_uri is required.")]
-    public Uri? RedirectUri { get; set; }
+    public string? RedirectUri { get; set; }
     
     [JsonPropertyName("scope")]
     public string? Scope { get; set; }
@@ -42,21 +42,12 @@ public class ProcessAuthorizationRequest : IParsable<ProcessAuthorizationRequest
     public static ProcessAuthorizationRequest Parse(string s, IFormatProvider? provider)
     {
         var query = QueryHelpers.ParseQuery(s);
-        if (!Guid.TryParse(query["client_id"], out var clientId))
-        {
-            throw new ValidationException("client_id is required.");
-        }
-
-        if (!Uri.TryCreate(query["redirect_uri"], UriKind.Absolute, out var redirectUri))
-        {
-            throw new ValidationException("redirect_uri is required.");            
-        }
-        
         return new ProcessAuthorizationRequest
         {
+            ClientId = query["client_id"],
             ResponseType = query["response_type"],
             ClientSecret = query["client_secret"],
-            RedirectUri = redirectUri,
+            RedirectUri = query["redirect_uri"],
             Resource = query["resource"],
             Scope = query["scope"],
             State = query["state"],

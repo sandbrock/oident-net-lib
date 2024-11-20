@@ -37,22 +37,12 @@ public class AuthorizationCodeProcessor(
                 "Invalid response_type");
         }
         
-        // Parse the client_id
-        if (!Guid.TryParse(processTokenRequest.ClientId, out var clientId))
-        {
-            return GenericHttpResponse<ProcessTokenResponse>.CreateErrorResponse(
-                HttpStatusCode.BadRequest,
-                OIdentErrors.InvalidClientId,
-                OAuthErrorTypes.InvalidRequest,
-                "Invalid client_id");
-        }
-        
         // Validate the client
         var validateClientResponse = await clientValidator.ValidateAsync(new ValidateClientRequest
         {
-            ClientId = clientId,
+            ClientId = processTokenRequest.ClientId,
             ClientSecret = processTokenRequest.ClientSecret,
-            RedirectUri = processTokenRequest.RedirectUri
+            RedirectUri = processTokenRequest.RedirectUri,
         });
         if (!validateClientResponse.IsSuccess)
         {
@@ -81,7 +71,7 @@ public class AuthorizationCodeProcessor(
         var createTokenSessionRequest = new CreateTokenSessionRequest()
         {
             SessionId = validateSessionResponse.Data!.SessionId,
-            ClientId = clientId,
+            ClientId = validateClientResponse.Data!.ClientId,
             UserId = validateSessionResponse.Data!.UserId,
             Subject = validateSessionResponse.Data.UserId.ToString(),
             PrincipalType = validateSessionResponse.Data.PrincipalType,

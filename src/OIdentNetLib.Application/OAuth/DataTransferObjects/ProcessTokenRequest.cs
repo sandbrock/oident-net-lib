@@ -17,7 +17,7 @@ public class ProcessTokenRequest
     public string? ClientSecret { get; set; }
     
     [JsonPropertyName("redirect_uri")]
-    public Uri? RedirectUri { get; set; }
+    public string? RedirectUri { get; set; }
     
     [JsonPropertyName("scope")]
     public string? Scope { get; set; }

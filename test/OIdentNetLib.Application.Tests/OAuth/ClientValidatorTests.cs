@@ -30,7 +30,8 @@ public class ClientValidatorTests
 
         var request = new ValidateClientRequest
         {
-            ClientId = Guid.NewGuid()
+            ClientId = Guid.NewGuid().ToString(),
+            RedirectUri = "https://example.com/redirect"
         };
 
         // Act
@@ -70,9 +71,9 @@ public class ClientValidatorTests
 
         var request = new ValidateClientRequest
         {
-            ClientId = Guid.NewGuid(),
+            ClientId = Guid.NewGuid().ToString(),
             ClientSecret = "client_secret",
-            RedirectUri = new Uri("https://example.com")
+            RedirectUri = "https://example.com"
         };
 
         // Act
@@ -112,9 +113,9 @@ public class ClientValidatorTests
 
         var request = new ValidateClientRequest
         {
-            ClientId = Guid.NewGuid(),
+            ClientId = Guid.NewGuid().ToString(),
             ClientSecret = "client_secret",
-            RedirectUri = new Uri("https://example.com/invalid")
+            RedirectUri = "https://example.com/invalid"
         };
 
         // Act
@@ -154,9 +155,9 @@ public class ClientValidatorTests
 
         var request = new ValidateClientRequest
         {
-            ClientId = Guid.NewGuid(),
+            ClientId = Guid.NewGuid().ToString(),
             ClientSecret = "client_secret",
-            RedirectUri = new Uri("https://example.com/invalid")
+            RedirectUri = "https://example.com/invalid"
         };
 
         // Act

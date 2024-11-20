@@ -26,11 +26,10 @@ public class AuthorizationProcessor(
         ProcessAuthorizationRequest processAuthorizationRequest,
         ValidateSessionRequest validateSessionRequest)
     {
-        // Validate the client
         var validateClientRequest = new ValidateClientRequest
         {
             ClientId = processAuthorizationRequest.ClientId,
-            RedirectUri = processAuthorizationRequest.RedirectUri
+            RedirectUri = processAuthorizationRequest.RedirectUri,
         };
         var validateClientResponse = await clientValidator.ValidateAsync(validateClientRequest);
         
@@ -44,7 +43,7 @@ public class AuthorizationProcessor(
                     validateClientResponse.ErrorDescription);
             case OIdentErrors.InvalidClientSecret:
                 return GenericHttpResponse<ProcessAuthorizationResponse>.CreateRedirectResponse(
-                    processAuthorizationRequest.RedirectUri!,
+                    new Uri(validateClientRequest.RedirectUri!),
                     OIdentErrors.InvalidClientSecret,
                     validateClientResponse.Error,
                     validateClientResponse.ErrorDescription);
@@ -68,7 +67,7 @@ public class AuthorizationProcessor(
         if (processAuthorizationRequest.ResponseType != "code")
         {
             return GenericHttpResponse<ProcessAuthorizationResponse>.CreateRedirectResponse(
-                processAuthorizationRequest.RedirectUri!,
+                new Uri(processAuthorizationRequest.RedirectUri!),
                 OIdentErrors.InvalidResponseType,
                 OAuthErrorTypes.UnsupportedResponseType,
                 "Unsupported response_type parameter.");
@@ -117,7 +116,7 @@ public class AuthorizationProcessor(
             Scope = processAuthorizationRequest.Scope,
             CodeChallenge = processAuthorizationRequest.CodeChallenge,
             CodeChallengeMethod = processAuthorizationRequest.CodeChallengeMethod,
-            ClientId = processAuthorizationRequest.ClientId,
+            ClientId = validateClientResponse.Data!.ClientId,
             ClientRedirectUriId = validateClientResponse.Data?.ClientRedirectUri?.ClientRedirectUriId,
             SessionCreatedAt = createdAt,
             SessionExpiresAt = createdAt.AddSeconds(oidentOptions.Value.AuthorizationSessionExpirationInSeconds)
@@ -137,7 +136,7 @@ public class AuthorizationProcessor(
             return GenericHttpResponse<ProcessAuthorizationResponse>.CreateSuccessResponse(HttpStatusCode.OK);
 
         return GenericHttpResponse<ProcessAuthorizationResponse>.CreateRedirectResponse(
-            request.RedirectUri!,
+            new Uri(request.RedirectUri!),
             objectValidationResults.OIdentError,
             objectValidationResults.Error,
             objectValidationResults.ErrorDescription);
