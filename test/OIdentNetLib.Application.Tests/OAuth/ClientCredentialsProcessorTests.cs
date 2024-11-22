@@ -20,11 +20,13 @@ public class ClientCredentialsProcessorTests
         // Arrange
         var logger = new Mock<ILogger<ClientCredentialsProcessor>>();
         var clientValidator = new Mock<IClientValidator>();
+        var resourceServerValidator = new Mock<ResourceServerValidator>();
         var requestMetadata = new RequestMetadata();
         var processTokenRequest = new ProcessTokenRequest();
         var clientCredentialsProcessor = new ClientCredentialsProcessor(
             logger.Object,
-            clientValidator.Object);
+            clientValidator.Object,
+            resourceServerValidator.Object);
         
         // Act
         var response = await clientCredentialsProcessor.ProcessAsync(
@@ -47,6 +49,7 @@ public class ClientCredentialsProcessorTests
                 OIdentErrors.InvalidClientId,
                 OAuthErrorTypes.InvalidRequest,
                 null));
+        var resourceServerValidator = new Mock<ResourceServerValidator>();
         var requestMetadata = new RequestMetadata();
         var processTokenRequest = new ProcessTokenRequest()
         {
@@ -56,7 +59,8 @@ public class ClientCredentialsProcessorTests
         };
         var clientCredentialsProcessor = new ClientCredentialsProcessor(
             logger.Object,
-            clientValidator.Object);
+            clientValidator.Object,
+            resourceServerValidator.Object);
         
         // Act
         var response = await clientCredentialsProcessor.ProcessAsync(
@@ -80,6 +84,7 @@ public class ClientCredentialsProcessorTests
                 OIdentErrors.InvalidClientId,
                 OAuthErrorTypes.InvalidRequest,
                 null));
+        var resourceServerValidator = new Mock<ResourceServerValidator>();
         var requestMetadata = new RequestMetadata();
         var processTokenRequest = new ProcessTokenRequest()
         {
@@ -89,7 +94,8 @@ public class ClientCredentialsProcessorTests
         };
         var clientCredentialsProcessor = new ClientCredentialsProcessor(
             logger.Object,
-            clientValidator.Object);
+            clientValidator.Object,
+            resourceServerValidator.Object);
         
         // Act
         var response = await clientCredentialsProcessor.ProcessAsync(
@@ -113,6 +119,7 @@ public class ClientCredentialsProcessorTests
                 OIdentErrors.InvalidClientSecret,
                 OAuthErrorTypes.UnauthorizedClient,
                 null));
+        var resourceServerValidator = new Mock<ResourceServerValidator>();
         var requestMetadata = new RequestMetadata();
         var processTokenRequest = new ProcessTokenRequest()
         {
@@ -122,7 +129,8 @@ public class ClientCredentialsProcessorTests
         };
         var clientCredentialsProcessor = new ClientCredentialsProcessor(
             logger.Object,
-            clientValidator.Object);
+            clientValidator.Object,
+            resourceServerValidator.Object);
         
         // Act
         var response = await clientCredentialsProcessor.ProcessAsync(
@@ -135,7 +143,7 @@ public class ClientCredentialsProcessorTests
     }
     
     [Fact]
-    public async Task ProcessAsync_InvalidScope_ReturnsError()
+    public async Task ProcessAsync_InvalidResourceServer_ReturnsError()
     {
         // Arrange
         var logger = new Mock<ILogger<ClientCredentialsProcessor>>();
@@ -148,7 +156,19 @@ public class ClientCredentialsProcessorTests
                     ClientId = Guid.NewGuid(),
                     ClientName = "test-client",
                 }));
-        var requestMetadata = new RequestMetadata();
+        var resourceServerValidator = new Mock<IResourceServerValidator>();
+        resourceServerValidator.Setup(v => v.ValidateAsync(
+                It.IsAny<RequestMetadata>(),
+                It.IsAny<ValidateResourceServerRequest>()))
+            .ReturnsAsync(GenericHttpResponse<ValidateResourceServerResponse>.CreateErrorResponse(
+                HttpStatusCode.BadRequest,
+                OIdentErrors.InvalidResourceServer,
+                OAuthErrorTypes.InvalidRequest,
+                "Invalid resource."));
+        var requestMetadata = new RequestMetadata()
+        {
+            Host = "api.example.com",
+        };
         var processTokenRequest = new ProcessTokenRequest()
         {
             GrantType = "client_credentials",
@@ -159,7 +179,8 @@ public class ClientCredentialsProcessorTests
         };
         var clientCredentialsProcessor = new ClientCredentialsProcessor(
             logger.Object,
-            clientValidator.Object);
+            clientValidator.Object,
+            resourceServerValidator.Object);
         
         // Act
         var response = await clientCredentialsProcessor.ProcessAsync(
@@ -167,7 +188,7 @@ public class ClientCredentialsProcessorTests
             processTokenRequest);
         
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
-        response.OIdentError.Should().Be(OIdentErrors.InvalidScope);
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.OIdentError.Should().Be(OIdentErrors.InvalidResourceServer);
     }
 }

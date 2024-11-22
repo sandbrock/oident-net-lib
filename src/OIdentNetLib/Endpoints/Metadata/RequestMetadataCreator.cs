@@ -5,17 +5,22 @@ namespace OIdentNetLib.Endpoints.Metadata;
 
 public static class RequestMetadataCreator
 {
-    public static RequestMetadata Create(HttpRequest httpRequest)
+    public static RequestMetadata Create(HttpContext httpContext)
     {
-        string? host = httpRequest.Headers["X-Forwarded-For"];
+        string? host = httpContext.Request.Headers["X-Forwarded-For"];
         if (string.IsNullOrEmpty(host))
         {
-            host = httpRequest.Host.Value;
+            host = httpContext.Request.Host.Value;
         }
+
+        var tenantPath = httpContext.Items.TryGetValue("tenant_path", out var path)
+            ? path!.ToString()
+            : null;
         
         return new RequestMetadata()
         {
-            Host = host
+            Host = host,
+            TenantPath = tenantPath
         };
     }
 }

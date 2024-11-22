@@ -11,21 +11,22 @@ public class OAuthSrvDbContext : DbContext
     {
     }
 
-    public DbSet<Audience> Audiences { get; set; }
-    public DbSet<AudienceScope> AudienceScopes { get; set; }
     public DbSet<Client> Clients { get; set; }
-    public DbSet<ClientAudienceScope> ClientAudienceScopes { get; set; }
+    public DbSet<ClientResourceServerScope> ClientAudienceScopes { get; set; }
     public DbSet<ClientRedirectUri> ClientRedirectUris { get; set; }
+    public DbSet<ResourceServer> ResourceServers { get; set; }
+    public DbSet<ResourceServerScope> ResourceServerScopes { get; set; }
     public DbSet<Tenant> Tenants { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        AudienceMapping.InitializeModelSchema(modelBuilder);
-        AudienceScopeMapping.InitializeModelSchema(modelBuilder);
         ClientMapping.InitializeModelSchema(modelBuilder);
-        ClientAudienceScopeMapping.InitializeModelSchema(modelBuilder);
+        ClientResourceServerScopeMapping.InitializeModelSchema(modelBuilder);
         ClientRedirectUriMapping.InitializeModelSchema(modelBuilder);
+        ResourceServerMapping.InitializeModelSchema(modelBuilder);
+        ResourceServerScopeMapping.InitializeModelSchema(modelBuilder);
         TenantMapping.InitializeModelSchema(modelBuilder);
+        TenantEndpointMapping.InitializeModelSchema(modelBuilder);
         
         base.OnModelCreating(modelBuilder);
     }

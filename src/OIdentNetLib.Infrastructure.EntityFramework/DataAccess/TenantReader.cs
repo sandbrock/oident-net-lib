@@ -27,4 +27,14 @@ public class TenantReader(OAuthSrvDbContext context) : ITenantReader
         
         return result;
     }
+
+    public async Task<Tenant?> GetByHostAsync(string host)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<Tenant?> GetByPathAsync(string path)
+    {
+        throw new NotImplementedException();
+    }
 }

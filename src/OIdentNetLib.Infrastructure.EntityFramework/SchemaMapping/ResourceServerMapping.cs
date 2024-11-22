@@ -3,18 +3,18 @@ using OIdentNetLib.Infrastructure.Database;
 
 namespace OIdentNetLib.Infrastructure.EntityFramework.SchemaMapping;
 
-public static class AudienceMapping
+public static class ResourceServerMapping
 {
     public static void InitializeModelSchema(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Audience>(entity =>
+        modelBuilder.Entity<ResourceServer>(entity =>
         {
-            entity.HasKey(e => e.AudienceId);
+            entity.HasKey(e => e.ResourceServerId);
 
-            entity.ToTable("audience");
+            entity.ToTable("resource_server");
 
             entity.Property(e => e.CreatedAt).HasColumnName("created_at");
-            entity.Property(e => e.AudienceId).HasColumnName("audience_id");
+            entity.Property(e => e.ResourceServerId).HasColumnName("resource_server_id");
             entity.Property(e => e.Name).HasColumnName("name").HasMaxLength(50);
             entity.Property(e => e.Description)
                 .HasColumnName("description")
@@ -22,19 +22,19 @@ public static class AudienceMapping
                 .IsRequired(false);
             entity.Property(e => e.LogoUrl)
                 .HasColumnName("logo_url")
-                .HasMaxLength(2048)
+                .HasMaxLength(1024)
                 .IsRequired(false);
             entity.Property(e => e.WebsiteUrl)
                 .HasColumnName("website_url")
-                .HasMaxLength(2048)
+                .HasMaxLength(1024)
                 .IsRequired(false);
             entity.Property(e => e.PrivacyPolicyUrl)
                 .HasColumnName("privacy_policy_url")
-                .HasMaxLength(2048)
+                .HasMaxLength(1024)
                 .IsRequired(false);
             entity.Property(e => e.TermsOfServiceUrl)
                 .HasColumnName("terms_of_service_url")
-                .HasMaxLength(2048)
+                .HasMaxLength(1024)
                 .IsRequired(false);
             entity.Property(e => e.TenantId).HasColumnName("tenant_id");
 

@@ -13,6 +13,7 @@ namespace OIdentNetLib.Application.OAuth;
 /// </summary>
 public class AuthorizationCodeProcessor(
     IClientValidator clientValidator,
+    ITenantValidator tenantValidator,
     IAuthorizationSessionValidator authorizationSessionValidator,
     IAuthorizationSessionWriter authorizationSessionWriter,
     ITokenSessionCreator tokenSessionCreator

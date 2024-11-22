@@ -16,7 +16,15 @@ public static class OAuthEndpoints
             .WithName("Authorize")
             .WithDescription("OAuth authorization endpoint.");
         
+        app.MapGet("/oauth/{tenant}/authorize", AuthorizeWithTenantAsync)
+            .WithName("Authorize")
+            .WithDescription("OAuth authorization endpoint.");
+
         app.MapPost("/oauth/token", TokenAsync)
+            .WithName("Token")
+            .WithDescription("OAuth token endpoint.");
+        
+        app.MapPost("/oauth/{tenant}/token", TokenWithTenantAsync)
             .WithName("Token")
             .WithDescription("OAuth token endpoint.");
     }
@@ -27,13 +35,28 @@ public static class OAuthEndpoints
         IAuthorizationProcessor authorizationProcessor,
         [FromQuery] ProcessAuthorizationRequest processAuthorizationRequest)
     {
-        var requestMetadata = RequestMetadataCreator.Create(httpRequest);
+        var requestMetadata = RequestMetadataCreator.Create(httpContext);
         var processAuthorizationResponse = await authorizationProcessor.ProcessAsync(
             requestMetadata,
             processAuthorizationRequest,
             new ValidateSessionRequest());
         return processAuthorizationResponse.ToHttpResult();
     }
+    
+    private static async Task<IResult> AuthorizeWithTenantAsync(
+        HttpContext httpContext,
+        HttpRequest httpRequest,
+        IAuthorizationProcessor authorizationProcessor,
+        string tenant,
+        [FromQuery] ProcessAuthorizationRequest processAuthorizationRequest)
+    {
+        httpContext.Items.Add("tenant_path", tenant);
+        return await AuthorizeAsync(
+            httpContext,
+            httpRequest,
+            authorizationProcessor,
+            processAuthorizationRequest);
+    }    
 
     private static async Task<IResult> TokenAsync(
         HttpContext httpContext,
@@ -65,10 +88,24 @@ public static class OAuthEndpoints
             return Results.BadRequest(OAuthErrorTypes.InvalidRequest);
         }
         
-        var requestMetadata = RequestMetadataCreator.Create(httpRequest);
+        var requestMetadata = RequestMetadataCreator.Create(httpContext);
         var processTokenResponse = await tokenProcessor.ProcessAsync(
             requestMetadata,
             processTokenRequest);
         return processTokenResponse.ToHttpResult();
     }
+
+    private static async Task<IResult> TokenWithTenantAsync(
+        HttpContext httpContext,
+        HttpRequest httpRequest,
+        ITokenProcessor tokenProcessor,
+        string tenant)
+    {
+        httpContext.Items.Add("tenant_path", tenant);
+        return await TokenAsync(
+            httpContext,
+            httpRequest,
+            tokenProcessor);
+    }
+        
 }

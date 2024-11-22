@@ -1,8 +1,8 @@
 namespace OIdentNetLib.Infrastructure.Database;
 
-public class Audience : BaseModel
+public class ResourceServer : BaseModel
 {
-    public Guid? AudienceId { get; set; }
+    public Guid? ResourceServerId { get; set; }
     public string? Name { get; set; }
     public string? Description { get; set; }
     public string? LogoUrl { get; set; }

@@ -13,7 +13,9 @@ namespace OIdentNetLib.Application.OAuth;
 /// </summary>
 public class ClientCredentialsProcessor(
     ILogger<ClientCredentialsProcessor> logger,
-    IClientValidator clientValidator
+    ITenantValidator tenantValidator,
+    IClientValidator clientValidator,
+    IResourceServerValidator resourceServerValidator
 ) : IClientCredentialsProcessor
 {
     public async Task<GenericHttpResponse<ProcessTokenResponse>> ProcessAsync(
@@ -63,6 +65,23 @@ public class ClientCredentialsProcessor(
                 clientValidationResult.OIdentError,
                 clientValidationResult.Error,
                 clientValidationResult.ErrorDescription);
+        }
+        
+        // Validate the resource server
+        var validateResourceServerRequest = new ValidateResourceServerRequest()
+        {
+            Resource = processTokenRequest.Resource
+        };
+        var validateResourceServerResponse = await resourceServerValidator.ValidateAsync(
+            requestMetadata,
+            validateResourceServerRequest);
+        if (!validateResourceServerResponse.IsSuccess)
+        {
+            return GenericHttpResponse<ProcessTokenResponse>.CreateErrorResponse(
+                validateResourceServerResponse.StatusCode,
+                validateResourceServerResponse.OIdentError,
+                validateResourceServerResponse.Error,
+                validateResourceServerResponse.ErrorDescription);
         }
 
         await Task.CompletedTask;

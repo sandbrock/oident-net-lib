@@ -6,7 +6,7 @@ public class UserAuthorization : BaseModel
     public User? User { get; set; }
     
     public Guid? AudienceScopeId { get; set; }
-    public AudienceScope? AudienceScope { get; set; }
+    public ResourceServerScope? ResourceServerScope { get; set; }
 
     public Guid? ClientId { get; set; }
     public Client? Client { get; set; }

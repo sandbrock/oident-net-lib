@@ -3,20 +3,20 @@ using OIdentNetLib.Infrastructure.Database;
 
 namespace OIdentNetLib.Infrastructure.EntityFramework.SchemaMapping;
 
-public static class ClientAudienceScopeMapping
+public static class ClientResourceServerScopeMapping
 {
     public static void InitializeModelSchema(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<ClientAudienceScope>(entity =>
+        modelBuilder.Entity<ClientResourceServerScope>(entity =>
         {
-            entity.ToTable("client_audience_scope");
+            entity.ToTable("client_resource_server_scope");
 
-            entity.HasKey(e => new { e.ClientId, e.AudienceScopeId });
+            entity.HasKey(e => new { e.ClientId, AudienceScopeId = e.ResourceServerScopeId });
             
             entity.Property(e => e.CreatedAt).HasColumnName("created_at");
             entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
             entity.Property(e => e.ClientId).HasColumnName("client_id");
-            entity.Property(e => e.AudienceScopeId).HasColumnName("audience_scope_id");
+            entity.Property(e => e.ResourceServerScopeId).HasColumnName("resource_server_scope_id");
 
             entity
                 .HasOne(e => e.Client)
@@ -25,10 +25,10 @@ public static class ClientAudienceScopeMapping
                 .HasPrincipalKey(e => e.ClientId);
 
             entity
-                .HasOne(e => e.AudienceScope)
+                .HasOne(e => e.ResourceServerScope)
                 .WithMany()
-                .HasForeignKey(e => e.AudienceScopeId)
-                .HasPrincipalKey(e => e.AudienceScopeId);
+                .HasForeignKey(e => e.ResourceServerScopeId)
+                .HasPrincipalKey(e => e.ResourceServerScopeId);
         });
     }
 }

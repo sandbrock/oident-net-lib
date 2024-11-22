@@ -17,6 +17,7 @@ namespace OIdentNetLib.Application.OAuth;
 public class TokenSessionProcessor(
     ILogger<TokenSessionProcessor> logger,
     IOptions<OIdentOptions> oidentOptions,
+    ITenantValidator tenantValidator,
     ITokenSessionReader tokenSessionReader,
     ITokenSessionWriter tokenSessionWriter,
     IJwtCreator jwtCreator
